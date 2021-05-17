@@ -27,7 +27,7 @@ struct train_details
     char train_name[50];
     char train_number[5];
     char origin[15];
-    char train_class[10];
+    char train_class[10][5];    //10 classes max. Classes can be stored in abbreviations of 5 char long
     char destination[15];
 };
 
@@ -35,10 +35,44 @@ struct train_details
 can be done easily while reading files*/
 struct routes
 {
-    char origin_station[50];
-    char *train_stops[50];
-    char dest_station[50];
+    char origin_station[15];
+    char train_stops[5][15];
+    char dest_station[15];
+    char train_no[5];       //Train number should be the same in train_details
 };
+
+//Adding a route for the train
+void add_route(char tno[], char org[], char dest[])
+{
+    FILE *infile;
+    struct routes rt;
+    int i,n;
+    infile = fopen("routedets.txt","a+");
+    if( infile == NULL)
+    {
+        fprintf(stderr,"\nError opening file\n");
+        return;
+    }
+    strcpy(rt.train_no,tno);
+    strcpy(rt.origin_station,org);
+    strcpy(rt.origin_station,dest);
+    printf("Enter the number of stops between %s and $s: ",org,dest);
+    scanf("%d",&n);
+    if ( (n >= 0) && (n <= 5))
+    {
+        for (i=0; i<n; i++)
+        {
+            printf("Enter the %d stop: ",i+1);
+            scanf("%s",rt.train_stops[i]);
+        }
+    }
+    fwrite(&rt, sizeof(struct routes), 1, infile);
+    if(fwrite != 0)
+        printf("Train Route Details succesfully stored.\n");
+    else
+        printf("Error writing the file!!\n");
+    fclose(infile);
+}
 
 //User Password validation
 int passwd_valid(char uname[10],char pwd[12])
@@ -95,6 +129,77 @@ int admin_passwd_valid(char uname[10],char pwd[12])
     }
     return 0;
 }
+
+//Edit an existing train details
+void edit_existing_train(char tno[])
+{
+    FILE *infile;
+    struct train_details td;
+    
+}
+
+
+//Add a Train
+void add_train()
+{
+    struct train_details td;
+    FILE *infile;
+    char tname[5];
+    int n,i;
+    infile = fopen("traindets.txt","a+");
+    if(infile == NULL)
+    {
+        fprintf(stderr,"\nError in opening the file");
+        return;
+    }
+    printf("Enter the Train number: ");
+    scanf("%s",tname);
+    while(fread(&td, sizeof(struct train_details), 1, infile))
+    {
+        if(!strcmp(td.train_number,tname))
+        {
+            int ch;
+            printf("\nTrain Number already exists");
+            printf("\nDo you wish to edit the details of the train?\n 1.Yes\n 2.No\n");
+            scanf("%d",&ch);
+            if(ch == 1)
+            {
+                edit_existing_train(tname);
+                return;
+            }
+            else if(ch == 2)
+            {
+                break;
+            }
+            else
+                printf("Invalid choice\n");
+        }
+    }
+    printf("\tEnter the Train name:\n");
+    scanf("%s",td.train_name);
+    strcpy(td.train_number,tname);
+    printf("\tEnter the origin: ");
+    scanf("%s",td.origin);
+    printf("\tEnter the destination: ");
+    scanf("%s",td.destination);
+    printf("\tEnter the number of classes in the train: ");
+    scanf("%d",n);
+    for (i = 0; i<n ; i++)
+    {
+        printf("\nEnter the %d class of the train",i+1);
+        scanf("%s",td.train_class[i]);
+    }
+    fwrite(&td, sizeof(struct train_details), 1, infile);
+    if(fwrite != 0)
+        printf("Train Details succesfully stored.\n");
+    else
+        printf("Error writing the file!!\n");
+    
+    //Add route for the train which we just entered 
+    add_route(td.train_number,td.origin,td.destination);
+    fclose(infile);
+}
+
 
 //Admin Main Menu Panel
 void admin_menu()
