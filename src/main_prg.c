@@ -14,6 +14,13 @@ void add_train();
 
 char choice;
 
+void view_Details();
+void add_train();
+
+char choice;
+//Structure for user
+
+
 struct user_details
 {
     char first_name[20];
@@ -62,7 +69,7 @@ struct train_details
     char origin[15];
     char train_class[10];
     char destination[15];
-};
+}obj;
 
 struct routes
 {
@@ -607,6 +614,87 @@ void user_menu()
 
     } while (a >= 5 || c == 'Y' || c == 'y');
 }
+=======
+//Add Train Method
+void add_train()
+{
+
+    FILE *fptr;
+    printf("\nEnter num: ");
+    scanf(" %s", &obj.train_number);
+    printf("\nEnter name: ");
+    scanf(" %s", &obj.train_name);
+    printf("\nEnter origin: ");
+    scanf(" %s", &obj.origin);
+    printf("\nEnter dest: ");
+    scanf(" %s", &obj.destination);
+    printf("\nEnter class: ");
+    scanf(" %s", &obj.train_class);
+
+    fptr = fopen("TrainDetails.txt", "a+");
+
+    if (fptr == NULL)
+    {
+        printf("Error!");
+    }
+    else
+    {
+        fputs("\n", fptr);
+        fputs(obj.train_number, fptr);
+        fputs("\t", fptr);
+        fputs(obj.train_name, fptr);
+        fputs("\t", fptr);
+        fputs(obj.origin, fptr);
+        fputs("\t", fptr);
+        fputs(obj.destination, fptr);
+        fputs("\t", fptr);
+        fputs(obj.train_class, fptr);
+        fclose(fptr);
+    }
+
+label:
+    printf("Do you want to view details?\n");
+    printf("Enter 'y' to view details or 'n' to go back to main menu ");
+    scanf(" %c", &choice);
+    switch (choice)
+    {
+    case 'Y':
+    case 'y':
+        view_Details();
+        break;
+    case 'N':
+    case 'n':
+        printf("No");
+        break;
+    default:
+        printf("Wrong Choice!\n");
+    }
+}
+
+//View Train Details Method
+void view_Details()
+{
+
+    FILE *fptr;
+    fptr = fopen("TrainDetails.txt", "r");
+    if (fptr == NULL)
+    {
+        printf("ERROR! File could not open");
+        exit(1);
+    }
+
+    printf("===================================Train Details===============================\n");
+    printf("\n");
+    printf("Train Number   Train Name      Train Origin    Train Destination   Train Class\n");
+    while (fscanf(fptr, "%s\t%s\t%s\t%s\t\t%s\n", obj.train_number, obj.train_name, obj.origin, obj.destination, obj.train_class) != EOF)
+    {
+        printf("%s\t%s\t%s\t%s\t\t%s\n", obj.train_number, obj.train_name, obj.origin, obj.destination, obj.train_class);
+    }
+
+    fclose(fptr);
+}
+
+
 //Admin Main Menu Panel
 void admin_menu()
 {
