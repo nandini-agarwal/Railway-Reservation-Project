@@ -9,6 +9,11 @@
 #include <string.h> 
 #include <time.h>
 
+void view_Details();
+void add_train();
+
+char choice;
+
 struct user_details
 {
     char first_name[20];
