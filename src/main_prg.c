@@ -89,7 +89,8 @@ void user_menu();
 void admin_menu();
 void login_main(int n);
 void user_main();
-
+void user_reg();
+void login();
 void user_main();
 
 
@@ -730,6 +731,39 @@ void admin_menu()
     }while (c == 'Y' || c == 'y');
 }
 
+//User Login
+void login()
+{
+    char username[30],password[20];
+    FILE *log;
+    log = fopen("login.txt","r");
+    if (log == NULL)
+    {
+        fputs("Error at opening File!", stderr);
+        exit(1);
+    }
+    struct user_details l;
+    printf("\nPlease Enter your login credentials below\n\n");
+    printf("Username:  ");
+    fgets(username, 30, stdin);
+    // scanf("%s",username);
+    printf("\nPassword: ");
+    printf("\n");
+    fgets(password, 20, stdin);
+    while(fread(&l,sizeof(struct user_details),1,log))
+    {
+        if(strcmp(username,l.user_name)==0 && strcmp(password,l.password)==0)
+        {   
+            printf("\nSuccessful Login\n");
+        }
+        else 
+        {
+            printf("\nIncorrect Login Details\nPlease enter the correct credentials\n");
+        }
+    }
+    fclose(log);
+}
+
 //Main Login panel
 void login_main(int n)          // 0 -- Normal User, 1 -- Admin 
 {
@@ -754,6 +788,48 @@ void login_main(int n)          // 0 -- Normal User, 1 -- Admin
             printf("Invalid Login. Check the credentials. Please Try again.");
 }
 
+//User Registration
+void user_reg()
+{
+    char firstname[15];
+    FILE *log;
+    log=fopen("login.txt","w");
+    if (log == NULL)
+    {
+        fputs("Error at opening File!", stderr);
+        exit(1);
+    }
+    struct user_details l;                          
+    printf("\nEnter details for registration.\n\n");
+    printf("\nEnter First Name:\n");
+    scanf(" %s",&l.first_name);
+    printf("\nEnter Surname:\n");
+    scanf(" %s",&l.last_name);
+    printf("\nEnter Gender (M=male, F=female):\n");
+    fflush(stdin);
+    scanf(" %c",&l.gender);
+    printf("\nEnter Your age:\n");
+    scanf(" %d",&l.age);
+    printf("\nEnter Your contact number:\n");
+    scanf(" %s",&l.contact_number);
+    printf("\nEnter Your location:\n");
+    scanf(" %s",&l.location);
+    printf("\n\nPlease choose a username and password as credentials for system login.\nEnsure the username is no more than 30 characters long.\nEnsure your password is at least 8 characters long and contains lowercase, uppercase, numerical and special character values.");
+    printf("\nEnter Username:\n");
+    scanf(" %s",&l.user_name);
+    printf("\nEnter Password:\n");
+    scanf(" %s",&l.password);
+    printf("Thank you for registration.\nNow \n"); 
+    fwrite(&l,sizeof(struct user_details),1,log);
+    fclose(log);
+    printf("\nConfirming details...\n...\nWelcome, %s!\n\n",firstname);
+    printf("\nRegistration Successful!\n");
+    printf("Press any key to continue...");
+    getchar();
+    // system("CLS");
+    login();
+}
+
 //User Main panel
 void user_main()
 {
@@ -769,7 +845,7 @@ void user_main()
     switch(ch)
     {
     case 1:
-        // user_reg();
+        user_reg();
         break;
     case 2:
         user_menu();
@@ -799,7 +875,7 @@ int main()
         switch (choice)
         {
         case 1:
-            // admin_main();
+            admin_menu();
             break;
         case 2:
             user_main();
