@@ -13,11 +13,6 @@ void view_Details();
 void add_train();
 
 char choice;
-
-void view_Details();
-void add_train();
-
-char choice;
 //Structure for user
 
 
@@ -104,7 +99,37 @@ void display_route();
 void modify_route();
 void insert_route(int n,char d[15]);
 void delete_route(int n);
+void user_validt(char uname[],char pwd[]);
+void search_route(char city1[],char city2[]);
 
+//Search Route if the city exists in the given route or not
+void search_route(char city1[],char city2[])
+{
+    int f = 0;
+    struct routes *temp;
+    if(head == NULL)
+    {
+        printf("No route found");
+    }
+    else
+    {
+        temp = head;
+        while(temp != NULL)
+        {
+            if((strcmp(city1,temp->origin)==0) || (strcmp(city2,temp->origin)==0))
+            {
+                f = f+1;
+                temp = temp->next;
+            }
+            else
+                temp = temp->next;
+        }
+        if (f==2)
+            printf("\nMatched --- Route found");
+        else
+            printf("\nNot found");
+    }
+}
 
 int makePayment(double totalFare)
 {
@@ -196,7 +221,7 @@ int bookingTrain()
 
     isValid = 1;
     while (1)
-    {
+    {      
         fflush(stdin);
         printf("Destination - ");
         gets(book[input].Destination);
@@ -561,9 +586,9 @@ int admin_passwd_valid(char uname[10],char pwd[12])
     /*Admin Details:-
         username - testad
         password - rail6 */
-    if(!strcmp(uname,"testad"))
+    if(!strcmp(uname,"test"))
     {
-        if(!strcmp(pwd,"rail6"))
+        if(!strcmp(pwd,"rail"))
         {
             return 1;
         }
@@ -574,7 +599,7 @@ int admin_passwd_valid(char uname[10],char pwd[12])
     }
     else
     {
-        printf("The username for admin is invalid. Please try again.");
+        printf("The username for admin is invalid.");
     }
     return 0;
 }
@@ -584,16 +609,18 @@ void user_menu()
 {
     int a;
     char c;
+    char c1[15],c2[15];
     printf("\n -------------- User Menu -------------");
     // validation;
     do
     {
-         system("@cls||clear");
+        system("@cls||clear");
         printf("\n1. Make a Booking");
         printf("\n2. Modify the Booking");
         printf("\n3. Cancel the booking");
         printf("\n4. Show Reservation");
-        printf("\n5. Return to Main Menu ");
+        printf("\n5. Search for the routes");
+        printf("\n6. Return to Main Menu ");
         scanf("%d", &a);
 
         switch (a)
@@ -615,6 +642,15 @@ void user_menu()
             show_booking();
             break;
         case 5:
+            system("@cls||clear");
+            fflush(stdin);
+            printf("Enter the first city: ");
+            fgets(c1,15,stdin);
+            printf("Enter the second city: ");
+            fgets(c2,15,stdin);
+            search_route(c1,c2);
+            break;
+        case 6:
         system("@cls||clear");
             user_main();
             break;
@@ -626,7 +662,7 @@ void user_menu()
         printf("\n Return to User Menu ( Press Y or y) ");
         scanf("%c", &c);
 
-    } while (a >= 5 || c == 'Y' || c == 'y');
+    } while (a >= 6 || c == 'Y' || c == 'y');
 }
 
 //Add Train Method
@@ -704,7 +740,7 @@ void view_Details()
     {
         printf("%s\t%s\t%s\t%s\t\t%s\n", obj.train_number, obj.train_name, obj.origin, obj.destination, obj.train_class);
     }
-
+    getch();
     fclose(fptr);
 }
 
@@ -718,35 +754,33 @@ void admin_menu()
     {
         printf("\n-------Admin Menu--------\n");
         printf("\n1. Add a train");
-        printf("\n2. Modify a train");
-        printf("\n3. Delete a train");
-        printf("\n4. Log Out");
+        printf("\n2. Display train details");
+        //printf("\n3. Delete a train");
+        printf("\n3. Log Out");
         printf("Enter your choice: ");
         scanf("%d",&ch);
         switch(ch)
         {
             case 1:
                 add_train();
+                printf("\n\n\n\n");
+                routes_menu();
                 break;
             case 2:
-                // modify_train();
+                view_Details();
                 break;
             case 3:
-                // delete_train();
-                break;
-            case 4:
                 printf("Succesfully logged out");
-                return;
+                break;
         }
+        fflush(stdin);
         printf("Do you wish to continue?(Please enter Y or y to continue) ");
         scanf("%c",&c);
     }while (c == 'Y' || c == 'y');
 }
-
-//User Login
-void login()
+//User validation
+void user_validt(char uname[],char pwd[])
 {
-    char username[30],password[20];
     FILE *log;
     log = fopen("login.txt","r");
     if (log == NULL)
@@ -755,18 +789,12 @@ void login()
         exit(1);
     }
     struct user_details l;
-    printf("\nPlease Enter your login credentials below\n\n");
-    printf("Username:  ");
-    fgets(username, 30, stdin);
-    // scanf("%s",username);
-    printf("\nPassword: ");
-    printf("\n");
-    fgets(password, 20, stdin);
     while(fread(&l,sizeof(struct user_details),1,log))
     {
-        if(strcmp(username,l.user_name)==0 && strcmp(password,l.password)==0)
+        if(strcmp(uname,l.user_name) ==0 && strcmp(pwd,l.password)==0)
         {   
             printf("\nSuccessful Login\n");
+            user_menu();
         }
         else 
         {
@@ -774,6 +802,20 @@ void login()
         }
     }
     fclose(log);
+}
+
+//User Login
+void login()
+{
+    char username[30],password[20];
+    printf("\nPlease Enter your login credentials below\n\n");
+    printf("Username:");
+    //fgets(username, 30, stdin);
+    scanf("%s",username);
+    printf("\nPassword:");
+    scanf("%s",password);
+    user_validt(username,password);
+    getch();
 }
 
 //Main Login panel
@@ -795,9 +837,13 @@ void login_main(int n)          // 0 -- Normal User, 1 -- Admin
         // res = user_passwd_valid(us_name,pwd);
     }
     if(res == 1)
-            admin_menu();
-        else
-            printf("Invalid Login. Check the credentials. Please Try again.");
+        admin_menu();
+    else
+    {
+        printf("Invalid Login. Check the credentials. Please Try again.");
+        getch();
+        main();
+    }
 }
 
 //User Registration
@@ -805,12 +851,6 @@ void user_reg()
 {
     char firstname[15];
     FILE *log;
-    log=fopen("login.txt","w");
-    if (log == NULL)
-    {
-        fputs("Error at opening File!", stderr);
-        exit(1);
-    }
     struct user_details l;                          
     printf("\nEnter details for registration.\n\n");
     printf("\nEnter First Name:\n");
@@ -832,6 +872,12 @@ void user_reg()
     printf("\nEnter Password:\n");
     scanf(" %s",&l.password);
     printf("Thank you for registration.\nNow \n"); 
+    log=fopen("login.txt","a+");
+    if (log == NULL)
+    {
+        fputs("Error at opening File!", stderr);
+        exit(1);
+    }
     fwrite(&l,sizeof(struct user_details),1,log);
     fclose(log);
     printf("\nConfirming details...\n...\nWelcome, %s!\n\n",firstname);
@@ -873,8 +919,6 @@ void user_main()
 //Main function
 int main()
 {
-    routes_menu();
-    user_menu();
     int choice;
     while (1)
     {
@@ -888,10 +932,10 @@ int main()
         switch (choice)
         {
         case 1:
-            admin_menu();
+            login_main(1);
             break;
         case 2:
-            user_main();
+            login();
             break;
         case 3:
             printf("Thank you for visiting. Please visit us soon");
@@ -905,7 +949,7 @@ int main()
 void routes_menu()
 {
     int n,c = 1;
-    while (c !=0 )
+    while (c !=4 )
     {
         printf("--------------------------\n");
         printf("-----Routes Menu----------\n");
@@ -913,7 +957,7 @@ void routes_menu()
         printf("1. Create a route\n");
         printf("2. Display a route\n");
         printf("3. Modify a route\n");
-        printf("4. Exit\n");
+        printf("4. Return to Train's menu\n");
         printf("--------------------------\n");
         printf("Enter your choice: ");
         scanf("%d", &c);
@@ -934,7 +978,7 @@ void routes_menu()
                 modify_route();
                 break;
             case 4:
-                exit(0);
+                break;    
             default:
                 printf("Enter a valid choice.\nGiven choice is invalid.\n ");
         }
@@ -1009,7 +1053,7 @@ void modify_route()
     {
         printf("---------------------------------------\n");
         printf("-----Routes Modification Menu----------\n");
-        printf("--------------------------\n");
+        printf("---------------------------------------\n");
         printf("1. Insertion of a city\n");
         printf("2. Deletion of a city\n");
         printf("3. Go back\n");
