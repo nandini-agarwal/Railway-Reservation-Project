@@ -49,3 +49,28 @@ Railway Reservation Project for DSA Assignment
 6. train_details: This structure contains train name, train number, origin, destination, train class, fare of the train and numbers of seats available for booking in that train.
 
 
+**The program has following functions:**
+
+void view_Details();
+void add_train();
+int makePayment(int totalFare);
+int payment(int age, int amount,int userinput);
+int bookingTrain();
+void show_booking();
+void cancelBooking();
+int admin_passwd_valid(char uname[10], char pwd[12]);
+void user_menu();
+void admin_menu();
+void login_main(int n);
+void user_main();
+void user_reg();
+// void login();
+void routes_menu();
+// void create_route(int n);
+void display_route();
+void modify_route();
+// void insert_route(int n,char d[15]);
+// void delete_route(int n);
+void user_validt(char uname[],char pwd[]);
+void search_route(char city1[],char city2[]);
+int seatAllocation(int capacity,int tno,int choice);
