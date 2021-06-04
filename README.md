@@ -33,3 +33,19 @@ Railway Reservation Project for DSA Assignment
 6. Remove passenger
 7. Edit passenger
 8. Edit booking
+
+**The program uses following structures:**
+
+1. user_details: This structure contains first name, last name, gender, age, contact number, location, user name and password of the users.
+
+2. booking: This structure contains PNR, Train Number, Source, Destination of the train booked.
+
+3. passDetails: This structure contains id, name, gender and age of passenger
+
+4. NoOfPassengers: This structure contains contact number and total number of passengers.
+
+5. routes: This structure contains origin, destination and two pointers next and previous routes.
+
+6. train_details: This structure contains train name, train number, origin, destination, train class, fare of the train and numbers of seats available for booking in that train.
+
+
