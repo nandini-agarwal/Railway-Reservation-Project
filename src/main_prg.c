@@ -218,7 +218,7 @@ while (fread(&t, sizeof(struct train_details), 1, fptr)) //loop to iterate over 
         break;
 }
 }
-int makePayment(double totalFare)
+int makePayment(int totalFare)
 {
     int ch = 0;
     // fetch fare;
