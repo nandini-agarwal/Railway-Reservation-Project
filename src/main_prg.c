@@ -13,11 +13,6 @@ void view_Details();
 void add_train();
 
 char choice;
-
-void view_Details();
-void add_train();
-
-char choice;
 //Structure for user
 
 
@@ -60,24 +55,32 @@ struct booking
 int input = 0;
 // srand((unsigned)time(&t));
 
+struct routes
+{
+    char origin[15];
+    struct routes* next;
+    struct routes* previous;    
+}*head, *last;
+
 double totalcost = 0;
 struct train_details
 {
     char train_name[50];
     char train_number[5];
     char origin[15];
-    char train_class[10];
+    char train_class[10][5];    //10 classes max. Classes can be stored in abbreviations of 5 char long
     char destination[15];
     int fare;
     int seats;
 }obj;
 
-struct routes
+/*struct routes
 {
-    char origin_station[50];
-    char *train_stops[50];
-    char dest_station[50];
-};
+    char origin_station[15];
+    char train_stops[5][15];
+    char dest_station[15];
+    char train_no[5];       //Train number should be the same in train_details
+};*/
 
 int makePayment(double totalFare);
 double payment(int age, double amount,int userinput);
@@ -125,6 +128,45 @@ case 1:
 
     }
     break;
+void user_reg();
+void login();
+void routes_menu();
+void create_route(int n);
+void display_route();
+void modify_route();
+void insert_route(int n,char d[15]);
+void delete_route(int n);
+void user_validt(char uname[],char pwd[]);
+void search_route(char city1[],char city2[]);
+
+//Search Route if the city exists in the given route or not
+void search_route(char city1[],char city2[])
+{
+    int f = 0;
+    struct routes *temp;
+    if(head == NULL)
+    {
+        printf("No route found");
+    }
+    else
+    {
+        temp = head;
+        while(temp != NULL)
+        {
+            if((strcmp(city1,temp->origin)==0) || (strcmp(city2,temp->origin)==0))
+            {
+                f = f+1;
+                temp = temp->next;
+            }
+            else
+                temp = temp->next;
+        }
+        if (f==2)
+            printf("\nMatched --- Route found");
+        else
+            printf("\nNot found");
+    }
+}
 
     case 2:{
 while (fread(&t, sizeof(struct train_details), 1, fptr)) //loop to iterate over file
@@ -261,7 +303,7 @@ int bookingTrain()
 
     isValid = 1;
     while (1)
-    {
+    {      
         fflush(stdin);
         printf("Destination - ");
         gets(book[input].Destination);
@@ -342,7 +384,7 @@ int bookingTrain()
     }
 
 
-        // show trains under this path;
+    // show trains under this path;
     isValid = 1;
     while (1)
     {
@@ -421,15 +463,15 @@ int bookingTrain()
         }
         if (book[input].NoOfPassengers >=1 && book[input].NoOfPassengers <=6) //check for numbers only
         {
-                isValid = 1;
-                
-            }
-            else
-            {
-                printf("Only 6 Booking's can be done under one PNR No.");
-                isValid = 0;
-            }
-        
+            isValid = 1;            
+        }
+
+        else
+        {
+            printf("Only 6 Booking's can be done under one PNR No.");
+            isValid = 0;
+        }
+
         if (isValid)
         {
             break;
@@ -987,9 +1029,9 @@ int admin_passwd_valid(char uname[10],char pwd[12])
     /*Admin Details:-
         username - testad
         password - rail6 */
-    if(!strcmp(uname,"testad"))
+    if(!strcmp(uname,"test"))
     {
-        if(!strcmp(pwd,"rail6"))
+        if(!strcmp(pwd,"rail"))
         {
             return 1;
         }
@@ -1000,7 +1042,7 @@ int admin_passwd_valid(char uname[10],char pwd[12])
     }
     else
     {
-        printf("The username for admin is invalid. Please try again.");
+        printf("The username for admin is invalid.");
     }
     return 0;
 }
@@ -1010,16 +1052,18 @@ void user_menu()
 {
     int a;
     char c;
+    char c1[15],c2[15];
     // validation;
     do
     {
-         system("@cls||clear");
-         printf("\n -------------- User Menu -------------");
+        system("@cls||clear");
+        printf("\n -------------- User Menu -------------");
         printf("\n1. Make a Booking");
         printf("\n2. Modify the Booking");
         printf("\n3. Cancel the booking");
         printf("\n4. Show Reservation");
-        printf("\n5. Return to Main Menu ");
+        printf("\n5. Search for the routes");
+        printf("\n6. Return to Main Menu ");
         scanf("%d", &a);
 
         switch (a)
@@ -1041,6 +1085,15 @@ void user_menu()
             show_booking();
             break;
         case 5:
+            system("@cls||clear");
+            fflush(stdin);
+            printf("Enter the first city: ");
+            fgets(c1,15,stdin);
+            printf("Enter the second city: ");
+            fgets(c2,15,stdin);
+            search_route(c1,c2);
+            break;
+        case 6:
         system("@cls||clear");
             user_main();
             break;
@@ -1052,7 +1105,7 @@ void user_menu()
         // printf("\nReturn to User Menu (Press Y or y)");
         // scanf("%c", &c);
         c = 'y';
-    } while (a >= 5 || c == 'Y' || c == 'y');
+    } while (a >= 6 || c == 'Y' || c == 'y');
 }
 //Add Train Method
 void add_train()
@@ -1136,7 +1189,7 @@ void view_Details()
     {
         printf("%s\t%s\t%s\t%s\t\t%s\n", obj.train_number, obj.train_name, obj.origin, obj.destination, obj.train_class);
     }
-
+    getch();
     fclose(fptr);
 }
 
@@ -1150,9 +1203,9 @@ void admin_menu()
     {
         printf("\n-------Admin Menu--------\n");
         printf("\n1. Add a train");
-        printf("\n2. Modify a train");
-        printf("\n3. Delete a train");
-        printf("\n4. Log Out");
+        printf("\n2. Display train details");
+        //printf("\n3. Delete a train");
+        printf("\n3. Log Out");
         printf("Enter your choice: ");
         scanf("%d",&ch);
         switch(ch)
@@ -1161,18 +1214,55 @@ void admin_menu()
                 add_train();
                 break;
             case 2:
-                // modify_train();
+                view_Details();
                 break;
             case 3:
-                // delete_train();
-                break;
-            case 4:
                 printf("Succesfully logged out");
-                return;
+                break;
         }
+        fflush(stdin);
         printf("Do you wish to continue?(Please enter Y or y to continue) ");
         scanf("%c",&c);
     }while (c == 'Y' || c == 'y');
+}
+//User validation
+void user_validt(char uname[],char pwd[])
+{
+    FILE *log;
+    log = fopen("login.txt","r");
+    if (log == NULL)
+    {
+        fputs("Error at opening File!", stderr);
+        exit(1);
+    }
+    struct user_details l;
+    while(fread(&l,sizeof(struct user_details),1,log))
+    {
+        if(strcmp(uname,l.user_name) ==0 && strcmp(pwd,l.password)==0)
+        {   
+            printf("\nSuccessful Login\n");
+            user_menu();
+        }
+        else 
+        {
+            printf("\nIncorrect Login Details\nPlease enter the correct credentials\n");
+        }
+    }
+    fclose(log);
+}
+
+//User Login
+void login()
+{
+    char username[30],password[20];
+    printf("\nPlease Enter your login credentials below\n\n");
+    printf("Username:");
+    //fgets(username, 30, stdin);
+    scanf("%s",username);
+    printf("\nPassword:");
+    scanf("%s",password);
+    user_validt(username,password);
+    getch();
 }
 
 //Main Login panel
@@ -1194,9 +1284,55 @@ void login_main(int n)          // 0 -- Normal User, 1 -- Admin
         // res = user_passwd_valid(us_name,pwd);
     }
     if(res == 1)
-            admin_menu();
-        else
-            printf("Invalid Login. Check the credentials. Please Try again.");
+        admin_menu();
+    else
+    {
+        printf("Invalid Login. Check the credentials. Please Try again.");
+        getch();
+        main();
+    }
+}
+
+//User Registration
+void user_reg()
+{
+    char firstname[15];
+    FILE *log;
+    struct user_details l;                          
+    printf("\nEnter details for registration.\n\n");
+    printf("\nEnter First Name:\n");
+    scanf(" %s",&l.first_name);
+    printf("\nEnter Surname:\n");
+    scanf(" %s",&l.last_name);
+    printf("\nEnter Gender (M=male, F=female):\n");
+    fflush(stdin);
+    scanf(" %c",&l.gender);
+    printf("\nEnter Your age:\n");
+    scanf(" %d",&l.age);
+    printf("\nEnter Your contact number:\n");
+    scanf(" %s",&l.contact_number);
+    printf("\nEnter Your location:\n");
+    scanf(" %s",&l.location);
+    printf("\n\nPlease choose a username and password as credentials for system login.\nEnsure the username is no more than 30 characters long.\nEnsure your password is at least 8 characters long and contains lowercase, uppercase, numerical and special character values.");
+    printf("\nEnter Username:\n");
+    scanf(" %s",&l.user_name);
+    printf("\nEnter Password:\n");
+    scanf(" %s",&l.password);
+    printf("Thank you for registration.\nNow \n"); 
+    log=fopen("login.txt","a+");
+    if (log == NULL)
+    {
+        fputs("Error at opening File!", stderr);
+        exit(1);
+    }
+    fwrite(&l,sizeof(struct user_details),1,log);
+    fclose(log);
+    printf("\nConfirming details...\n...\nWelcome, %s!\n\n",firstname);
+    printf("\nRegistration Successful!\n");
+    printf("Press any key to continue...");
+    getchar();
+    // system("CLS");
+    login();
 }
 
 //User Main panel
@@ -1214,7 +1350,7 @@ void user_main()
     switch(ch)
     {
     case 1:
-        // user_reg();
+        user_reg();
         break;
     case 2:
         user_menu();
@@ -1243,10 +1379,10 @@ int main()
         switch (choice)
         {
         case 1:
-            admin_menu();
+            login_main(1);
             break;
         case 2:
-            user_main();
+            login();
             break;
         case 3:
             printf("Thank you for visiting. Please visit us soon");
@@ -1254,4 +1390,272 @@ int main()
         }
     }
     return 0;
+}
+
+//Routes Main menu
+void routes_menu()
+{
+    int n,c = 1;
+    while (c !=4 )
+    {
+        printf("--------------------------\n");
+        printf("-----Routes Menu----------\n");
+        printf("--------------------------\n");
+        printf("1. Create a route\n");
+        printf("2. Display a route\n");
+        printf("3. Modify a route\n");
+        printf("4. Return to Train's menu\n");
+        printf("--------------------------\n");
+        printf("Enter your choice: ");
+        scanf("%d", &c);
+
+        switch(c)
+        {
+            case 1:
+                head = NULL;
+                last = NULL;
+                printf("\nEnter the number of stops you would like to create: ");
+                scanf("%d",&n);
+                create_route(n);
+                break;
+            case 2:
+                display_route();
+                break;
+            case 3:
+                modify_route();
+                break;
+            case 4:
+                break;    
+            default:
+                printf("Enter a valid choice.\nGiven choice is invalid.\n ");
+        }
+        printf("\n\n\n\n");       
+    }
+}
+
+//Function to create a new route
+void create_route(int n)
+{
+    int i;
+    char data[15];
+    struct routes *newNode;
+    if(n >= 1)
+    {
+        head = (struct routes*)malloc(sizeof(struct routes));
+        printf("Enter the origin: ");
+        fflush(stdin);
+        fgets(data,15,stdin);
+
+        strcpy(head->origin,data);
+        head->previous = NULL;
+        head->next = NULL;
+
+        last = head;
+        //Adding the rest of the cities
+        for(i=2; i<=n; i++)
+        {
+            newNode = (struct routes*)malloc(sizeof(struct routes));
+            printf("Enter the next stop: ");
+            fflush(stdin);
+            fgets(data,15,stdin);
+            
+            strcpy(newNode->origin,data);
+            newNode->previous = last;
+            newNode->next = NULL;
+
+            last->next = newNode;           //Link previous city to new one
+            last = newNode;                 //New node is the last node
+        }
+        printf("\n\nRoute created successfully");
+    }
+}
+
+//Display the route
+void display_route()
+{
+    struct routes *temp;
+
+    if(head == NULL)
+    {
+        printf("No route found");
+    }
+    else
+    {
+        temp = head;
+        printf("\n\nThe route active is:\n\n");
+        while(temp != NULL)
+        {
+            printf("%s\n", temp->origin);
+            temp = temp->next;
+        }
+    }
+}
+
+//For Modification 
+void modify_route()
+{
+    int n,c = 1;
+    char city[15];
+    while (c !=0 )
+    {
+        printf("---------------------------------------\n");
+        printf("-----Routes Modification Menu----------\n");
+        printf("---------------------------------------\n");
+        printf("1. Insertion of a city\n");
+        printf("2. Deletion of a city\n");
+        printf("3. Go back\n");
+        printf("---------------------------------------\n");
+        printf("Enter your choice: ");
+        scanf("%d", &c);
+        switch(c)
+        {
+            case 1:
+                printf("\nEnter the city which you would like to add: ");
+                fflush(stdin);
+                fgets(city,15,stdin);
+                printf("\nEnter the position where you would like to enter a new city: ");
+                scanf("%d",&n);
+                insert_route(n,city);
+                break;
+            case 2:
+                printf("\nEnter the position from which you would like to delete: ");
+                scanf("%d",&n);
+                delete_route(n);
+                break;
+            case 3:
+                routes_menu();
+                break;
+            default:
+                printf("Invalid choice. Try again");
+        }
+    }
+}
+
+//For insertion of a city
+void insert_route(int n,char d[])
+{
+    int i;
+    struct routes *newNode, *temp;
+    if(head == NULL)
+    {
+        printf("The route does not exist");
+    }
+    else
+    {
+        temp = head;
+        i = 1;
+        while(i<n-1 && temp!= NULL)
+        {
+            temp = temp->next;
+            i++;
+        }
+
+        //If Origin needs to be modified
+        if( n == 1)
+        {
+            newNode = (struct routes*)malloc(sizeof(struct routes));
+            strcpy(newNode->origin,d);
+            newNode->next = head;
+            newNode->previous = NULL;
+
+            head->previous = newNode;
+            head = newNode;
+
+            printf("\nRoute modified Successfully!!!");
+        }
+        else if(temp == last) //To modify destination
+        {
+            if(last == NULL)
+            {
+                printf("Nothing to enter here! As the list is empty.");
+            }
+            else
+            {
+                newNode = (struct routes*)malloc(sizeof(struct routes));
+                strcpy(newNode->origin,d);
+                newNode->next = NULL;
+                newNode->previous = last;
+
+                last->next = newNode;
+                last = newNode;
+                printf("\nRoute modified successfully!!!");
+            }
+        }
+        else if(temp != NULL)
+        {
+            newNode = (struct routes*)malloc(sizeof(struct routes));
+            strcpy(newNode->origin,d);
+            newNode->next = temp->next;     //New->next to n+1
+            newNode->previous = temp;       //new->prev to n-1
+            if(temp->next!=NULL)
+            {
+                temp->next->previous = newNode;
+            }
+            temp->next = newNode;
+            printf("\nRoute modified successfully!!!");
+        }
+        else
+        {
+            printf("Error!! Invalid position\n");
+        }
+    }
+}
+
+//To Delete of a city
+void delete_route(int n)
+{
+    struct routes *current;
+    int i;
+
+    current = head;
+    for(i=1; i<n && current!=NULL; i++)
+    {
+        current = current->next;
+    }
+    
+    //If the origin needs to be deleted
+    if(n == 1)
+    {
+        if(head == NULL)
+        {
+            printf("\nNothing to delete here!!!!");
+        }
+        else
+        {
+            head = head->next; //Since the origin needs to be needed
+            if(head != NULL)
+                head ->previous = NULL;
+            
+            free(current); //Delete the data from memory
+            printf("Successfully modified the route");
+        }
+    }
+    else if(current == last)    //Delete the last city
+    {
+        if(last == NULL)
+        {
+            printf("\nNothing to delete here!!!!");
+        }
+        else
+        {
+            last = last->previous;  //To make the second last city now the destination
+            if(last != NULL)
+                last->next = NULL;
+
+            free(current);      //To free memory
+            printf("Successfully modified the route");            
+        }
+    }
+    else if(current != NULL)
+    {
+        current->previous->next = current->next;
+        current->next->previous = current->previous;
+
+        free(current);
+        printf("Modified the route successfully");
+    }
+    else
+    {
+        printf("\nInvalid position\n");
+    }
 }
