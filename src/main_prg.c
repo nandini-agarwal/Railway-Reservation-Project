@@ -14,8 +14,6 @@ void view_Details();
 void add_train();
 
 char choice;
-//Structure for user
-
 
 struct user_details
 {
@@ -32,7 +30,7 @@ struct user_details
 struct booking
 {
     int PNR;
-    char trainNo[10];
+    int trainNo;
     char From[30];
     char Destination[30];
     int date;
@@ -54,8 +52,6 @@ struct booking
 } book[50];
 
 int input = 0;
-// srand((unsigned)time(&t));
-
 struct routes
 {
     char origin[15];
@@ -74,14 +70,6 @@ struct train_details
     int fare;
     int seats;
 }obj;
-
-/*struct routes
-{
-    char origin_station[15];
-    char train_stops[5][15];
-    char dest_station[15];
-    char train_no[5];       //Train number should be the same in train_details
-};*/
 
 int makePayment(int totalFare);
 int payment(int age, int amount,int userinput);
@@ -103,34 +91,8 @@ void modify_route();
 // void delete_route(int n);
 void user_validt(char uname[],char pwd[]);
 void search_route(char city1[],char city2[]);
+int seatAllocation(int capacity,int tno,int choice);
 int route_found = 0;
-
-//Search Route if the city exists in the given route or not
-
-// void checkTrain(char from[30],char destination[30])
-// {
-
-//     FILE *fptr;
-//     fptr = fopen("TrainDetails.txt", "r");
-//     if (fptr == NULL)
-//     {
-//         printf("ERROR! File could not open");
-//         exit(1);
-//     }
-//     while (fscanf(fptr, "%s\t\t%s\t\t%s\t\t%s\t\t\t%s\n", obj.train_number, obj.train_name, obj.origin, obj.destination, obj.train_class) != EOF)
-//     {
-//         printf((strcmpi(obj.origin, from)));
-
-//         printf("===================================Train Details===============================\n");
-//         printf("\n");
-//         printf("Train Number   Train Name      Train Origin    Train Destination   Train Class\n");
-//         printf("%s\t\t%s\t%s\t\t%s\t\t%s\n", obj.train_number, obj.train_name, obj.origin, obj.destination, obj.train_class);
-//         // }
-//     }
-//     getch();
-//     fclose(fptr);
-// }
-
 
 void search_route(char city1[],char city2[])
 {
@@ -163,8 +125,6 @@ void search_route(char city1[],char city2[])
         }
     }
 }
-int seatAllocation(int capacity,int tno,int choice);
-
 void user_main();
 
 int seatAllocation(int capacity,int tno,int choice){
@@ -218,11 +178,10 @@ while (fread(&t, sizeof(struct train_details), 1, fptr)) //loop to iterate over 
         break;
 }
 }
+
 int makePayment(int totalFare)
 {
-    int ch = 0;
-    // fetch fare;
-    //generate bill 
+    int ch = 0; 
     if (totalFare > 0.0)
     {
         printf("\n\nYour Fare For Tickets is   %lf ",totalFare);
@@ -238,15 +197,12 @@ int makePayment(int totalFare)
         return 0;
 }
 
-
-
 int payment(int age,int amount,int userinput)
 {
     switch (userinput)
     {
     case 1:{
         totalcost = amount;
-    //fare fetch.
     int fare = 100;
     if (age >= 0 && age <= 5)
     {
@@ -427,35 +383,34 @@ int bookingTrain()
     // checkTrain(book[input].From, book[input].Destination);
     view_Details();
     // show trains under this path;
-    isValid = 1;
-    while (1)
-    {
-        book[input].trainNo[0] = '\0';
+    // isValid = 1;
+    // while (1)
+    // {
         fflush(stdin);
         printf("\nTrain No. - ");
-        gets(book[input].trainNo);         //check in list also else invalid
-        for (int i = 0; i < strlen(book[input].trainNo); i++)
-        {
-            if ((book[input].trainNo[i] >= 48) || (book[input].trainNo[i] <=57)) //check for numbers only
-            {
-                isValid = 1;
+        scanf("%d",&book[input].trainNo);         //check in list also else invalid
+    //     for (int i = 0; i < strlen(book[input].trainNo); i++)
+    //     {
+    //         if ((book[input].trainNo[i] >= 48) || (book[input].trainNo[i] <=57)) //check for numbers only
+    //         {
+    //             isValid = 1;
                 
-            }
-            else
-            {
-                isValid = 0;
-                break;
-            }
-        }
-        if (isValid)
-        {
-            break;
-        }
-        else
-        {
-            printf("\n Train No should not contain character or special characters, enter again\n");
-        }
-    }
+    //         }
+    //         else
+    //         {
+    //             isValid = 0;
+    //             break;
+    //         }
+    //     }
+    //     if (isValid)
+    //     {
+    //         break;
+    //     }
+    //     else
+    //     {
+    //         printf("\n Train No should not contain character or special characters, enter again\n");
+    //     }
+    // }
     
     isValid = 1;
     while (1)
