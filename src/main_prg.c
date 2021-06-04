@@ -1265,6 +1265,7 @@ void user_validt(char uname[],char pwd[])
         if(strcmp(uname,l.user_name) ==0 && strcmp(pwd,l.password)==0)
         {   
             printf("\nSuccessful Login\n");
+            getch();
             user_menu();
         }
         else 
@@ -1320,25 +1321,139 @@ void login_main(int n)          // 0 -- Normal User, 1 -- Admin
 //User Registration
 void user_reg()
 {
-    char firstname[15];
+    int isValid = 1;
+    // char firstname[15];
     FILE *log;
     struct user_details l;    
     system("@cls||clear");
-    printf("********Enter user details********");                      
-    printf("\nEnter details for registration.\n\n");
-    printf("\nEnter First Name:\n");
-    scanf(" %s",&l.first_name);
-    printf("\nEnter Surname:\n");
-    scanf(" %s",&l.last_name);
-    printf("\nEnter Gender (M=male, F=female):\n");
-    fflush(stdin);
-    scanf(" %c",&l.gender);
+    printf("\n**********Enter details for registration.**********\n");
+    while(1) //Firstname
+    {
+        printf("\nEnter First Name:\n");
+        scanf("%s",&l.first_name);
+        for (int i = 0; i < strlen(l.first_name); i++)
+            {
+                if ((l.first_name[i] >= 65) && (l.first_name[i] <= 112)) //check for characters only in name
+                {
+                    isValid = 1;
+                    break;
+                }
+                else if (l.first_name[i] == 32){
+                    isValid = 1;
+                }
+                else
+                {
+                    isValid = 0;
+                }
+            }
+            if (isValid)
+            {
+                break;
+            }
+            else
+            {
+                printf("\n Name should not contain integer or special characters, enter again\n");
+            }
+
+    }
+
+    while(1) //Lastname
+    {
+        printf("\nEnter Surname:\n");
+        scanf("%s",&l.last_name);
+        for (int i = 0; i < strlen(l.last_name); i++)
+            {
+                if ((l.last_name[i] >= 65) && (l.last_name[i] <= 112)) //check for characters only in name
+                {
+                    isValid = 1;
+                    break;
+                }
+                else if (l.last_name[i] == 32){
+                    isValid = 1;
+                }
+                else
+                {
+                    isValid = 0;
+                }
+            }
+            if (isValid)
+            {
+                break;
+            }
+            else
+            {
+                printf("\n Last name should not contain integer or special characters, enter again\n");
+            }
+
+    }
+
+    printf("\nEnter Gender (M=male, F=female, O=Other):\n");
+    while(1){
+        fflush(stdin);
+        scanf("%c",&l.gender);
+        if(l.gender =='M' || l.gender=='m' || l.gender=='F'|| l.gender=='f' || l.gender=='O'|| l.gender=='o')
+        {
+            break;
+        }
+        else
+        {
+            printf("\n Invalid gender, enter again\n");
+            continue;
+        }
+    }
+    
     printf("\nEnter Your age:\n");
-    scanf(" %d",&l.age);
-    printf("\nEnter Your contact number:\n");
-    scanf(" %s",&l.contact_number);
-    printf("\nEnter Your location:\n");
-    scanf(" %s",&l.location);
+    while(1)
+    {
+        fflush(stdin);
+        scanf("%d", &l.age);
+        if ((l.age >=18) && (l.age< 100)) 
+        {
+            break;
+        }
+        else
+        {
+            printf("\n Invalid Age, enter again\n");
+            continue;
+        }
+    }
+
+    while(1)
+    {
+        printf("\nEnter Your contact number:\n");
+        scanf("%s",&l.contact_number);
+
+        if (!strcmpi(l.contact_number, "0000000000"))
+            {
+                isValid = 0;
+            }
+
+        for (int i = 0; i < 10; i++)
+        {
+            if ((l.contact_number[i] < 48) || (l.contact_number[i] > 57)) //check for numbers only
+            {
+                isValid = 0;
+                break;
+            }
+            else
+            {
+                isValid = 1;
+            }
+        }
+        if(strlen(l.contact_number)!=10){
+            printf("\n Invalid Contact No. \n");
+            continue;
+        }
+        if (isValid)
+        {
+            break;
+        }
+        else
+        {
+            printf("\n Contact number should not contain characters, enter again\n");
+        }
+    }
+
     printf("\n\nPlease choose a username and password as credentials for system login.\nEnsure the username is no more than 30 characters long.\nEnsure your password is at least 8 characters long and contains lowercase, uppercase, numerical and special character values.");
     printf("\nEnter Username:\n");
     scanf(" %s",&l.user_name);
@@ -1353,11 +1468,11 @@ void user_reg()
     }
     fwrite(&l,sizeof(struct user_details),1,log);
     fclose(log);
-    printf("\nConfirming details...\n...\nWelcome, %s!\n\n",firstname);
+    printf("\nConfirming details...\n...\nWelcome, %s!\n\n",l.first_name);
     printf("\nRegistration Successful!\n");
     printf("Press any key to continue...");
-    getchar();
-    system("CLS");
+    getch();
+    system("@cls||clear");
     printf("***************User Login***************");
     login();
 }
@@ -1368,6 +1483,7 @@ void user_main()
     int ch;
     char us_name[10];
     char pwd[12];
+    system("@cls||clear");
     printf("\n--------User Menu----------");
     printf("\n1. New User -- Register");
     printf("\n2. Existing User -- Sign In");
@@ -1380,8 +1496,8 @@ void user_main()
         user_reg();
         break;
     case 2:
-        user_menu();
-        // login_main(0);
+        // user_menu();
+        login(0);
         break;
     case 3:
     login_main(1);
