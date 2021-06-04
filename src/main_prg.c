@@ -1302,7 +1302,9 @@ void user_reg()
 {
     char firstname[15];
     FILE *log;
-    struct user_details l;                          
+    struct user_details l;    
+    system("@cls||clear");
+    printf("********Enter user details********");                      
     printf("\nEnter details for registration.\n\n");
     printf("\nEnter First Name:\n");
     scanf(" %s",&l.first_name);
@@ -1335,7 +1337,8 @@ void user_reg()
     printf("\nRegistration Successful!\n");
     printf("Press any key to continue...");
     getchar();
-    // system("CLS");
+    system("CLS");
+    printf("***************User Login***************");
     login();
 }
 
