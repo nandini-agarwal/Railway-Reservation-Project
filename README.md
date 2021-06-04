@@ -18,7 +18,18 @@ Railway Reservation Project for DSA Assignment
 2. User
 
 **Admin can access following functionalities:**
-1. Add Train
-2. Delete Train
+1. Login
+2. Add Train
 3. Modify Train
 4. View List of Trains
+5. Logout
+
+**User can access following functionalities:**
+1. Add booking
+2. Cancel booking
+3. Show booking 
+4. Modify booking 
+5. Add passenger 
+6. Remove passenger
+7. Edit passenger
+8. Edit booking
