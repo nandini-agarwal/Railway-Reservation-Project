@@ -1,6 +1,7 @@
 # Railway-Reservation-Project
 Railway Reservation Project for DSA Assignment
 
+
 **This project allows us to perform the following functionalities:**
 
 1. Add, Delete and Modify Users
@@ -12,10 +13,12 @@ Railway Reservation Project for DSA Assignment
 7. Discount on Reservation for senior citizens
 8. List of trains between two stations
 
+
 **This project has two sections:**
 
 1. Admin
 2. User
+
 
 **Admin can access following functionalities:**
 1. Login
@@ -23,6 +26,7 @@ Railway Reservation Project for DSA Assignment
 3. Modify Train
 4. View List of Trains
 5. Logout
+
 
 **User can access following functionalities:**
 1. Add booking
@@ -32,12 +36,14 @@ Railway Reservation Project for DSA Assignment
 5. Add passenger 
 6. Remove passenger
 7. Edit passenger
+8. Edit booking
+
 
 **The program uses following structures:**
 
 1. user_details: This structure contains first name, last name, gender, age, contact number, location, user name and password of the users.
 
-2. booking: This structure contains PNR, Train Number, Source, Destination ,Time & Date of the train booked , passenger details structure , NoOfPassengers ( which will contain no of passengers under that booking PNR No. ) ,contact and fare of the booking .
+2. booking: This structure contains PNR, Train Number, Source, Destination of the train booked.
 
 3. passDetails: This structure contains id, name, gender and age of passenger
 
@@ -56,13 +62,13 @@ Railway Reservation Project for DSA Assignment
 
 4. makePayment: This function allows the user to either pay or deny the payment
 
-5. bookingTrain: This function helps the user to do the reservation.
+5. bookingTrain: This function helps the user to book a train.
 
-6. show_booking: This function shows all the reservation by PNR NO. or all bookings. 
+6. show_booking: This function shows all the booking done by the user 
 
-7. cancelBooking: This function allows the user to cancel the reservation on the basis of PNR No.
+7. cancelBooking: This function allows the user to cancel the booking made by him
 
-8. modifyBooking: This function will allow the user to modify the reservation and will give the option to add passenger, remove passenger or edit existing passenger details.
+8. modifyBooking: This function allows the user to modify the booking made by him
 
 9. admin_passwd_valid: This function validates the admin login
 
@@ -70,20 +76,30 @@ Railway Reservation Project for DSA Assignment
 
 11. admin_menu: This function shows the admin all the functionalities that he can perform.
 
-12. login_main: This function lets the user or admin enter their login creadentials and login.
+12. login_main: This function lets the admin enter their login creadentials and login.
 
 13. user_main: This function lets the user register as new user, or sign in if they are existing user.
 
 14. user_reg: This function lets the user register as a new user.
 
-15. routes_menu: This function lets the admin choose to create, display and modify train routes.
+15. login: This function lets the user to enter their login credentials and login.
 
-16. display_route: This function lets the admin create a train route.
+16. routes_menu: This function lets the admin choose to create, display and modify train routes.
 
-17. modify_route: This function lets the admin modify an existing train route.
+17. create_route: This function lets the admin to create the new route for the train. 
 
-18. user_validt: This function validates the user login.
+18. display_route: This function lets the admin create a train route.
 
-19. search_route: This function lets the user search the train route.
+19. modify_route: This function lets the admin insert or delete a route for the train
 
-20. seatAllocation: This function allocates the seat to the user.
+20. delete_route: This function lets the admin delete the route.
+
+21. insert_route: This function lets the admin insert a route for the train.
+
+22. user_validt: This function validates the user login.
+
+23. search_route: This function lets the user search the train route.
+
+24. seatAllocation: This function allocates the seat to the user.
+
+
