@@ -25,7 +25,8 @@ Railway Reservation Project for DSA Assignment
 2. Add Train
 3. Modify Train
 4. View List of Trains
-5. Logout
+5. View List of All Users
+6. Logout
 
 
 **User can access following functionalities:**
@@ -102,10 +103,26 @@ Railway Reservation Project for DSA Assignment
 
 24. seatAllocation: This function allocates the seat to the user.
 
+25. disp_users: This function displays a list of all users.
+
 
 **Steps to run the program:**
-      
-  We are using **gcc compiler.**
+  
+  Using **makefile**
+1. navigate to the **src** folder
+2. Run command "make"
 
-1. To compile the program: gcc main_prg.c
-2. To run the program :     main_prg.exe
+
+  Using **gcc compiler.**
+1. Navigate to **src** folder.
+2. To compile the program: gcc -o main_prg main_prg.c
+3. To run the program :     main_prg.exe
+
+
+**Some future scope:**
+
+Functionality for Admin: 
+Display Reservation Chart
+
+Functions:
+disp_resv_chart: This function would take train number and date of journey as input to display a reservation chart of that train.
