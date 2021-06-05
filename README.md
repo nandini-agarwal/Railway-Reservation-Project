@@ -119,11 +119,16 @@ Railway Reservation Project for DSA Assignment
 3. To run the program :     main_prg.exe
 
 
+
 **Some future scope:**
+
+
 
 Functionality for Admin: 
 
 Display Reservation Chart
+
+
 
 Functions:
 
