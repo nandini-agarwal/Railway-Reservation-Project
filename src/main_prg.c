@@ -1,12 +1,12 @@
 /*  Team 6 
         Aditi , Nandini, Vasundhra, Yukta, Nikhil
 */
- //  ************   Railway Reservation Project    ************
+//  ************   Railway Reservation Project    ************
 
-#include <stdio.h> 
+#include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <string.h> 
+#include <string.h>
 #include <time.h>
 #include <conio.h>
 
@@ -19,12 +19,12 @@ struct user_details
 {
     char first_name[20];
     char last_name[30];
-    char gender;                
+    char gender;
     int age;
     char contact_number[12];
     char location[50];
-    char user_name[10];         
-    char password[12];          
+    char user_name[10];
+    char password[12];
 };
 
 struct booking
@@ -55,9 +55,9 @@ int input = 0;
 struct routes
 {
     char origin[15];
-    struct routes* next;
-    struct routes* previous;    
-}*head, *last;
+    struct routes *next;
+    struct routes *previous;
+} * head, *last;
 
 double totalcost = 0;
 struct train_details
@@ -65,14 +65,14 @@ struct train_details
     char train_name[50];
     char train_number[5];
     char origin[15];
-    char train_class[10][5];    //10 classes max. Classes can be stored in abbreviations of 5 char long
+    char train_class[10][5]; //10 classes max. Classes can be stored in abbreviations of 5 char long
     char destination[15];
     int fare;
     int seats;
-}obj;
+} obj;
 
 int makePayment(int totalFare);
-int payment(int age, int amount,int userinput);
+int payment(int age, int amount, int userinput);
 int bookingTrain();
 void show_booking();
 void cancelBooking();
@@ -89,103 +89,109 @@ void create_route(int n);
 void display_route();
 void modify_route();
 void user_main();
-void insert_route(int n,char d[15]);
+void insert_route(int n, char d[15]);
 void delete_route(int n);
-void user_validt(char uname[],char pwd[]);
-void search_route(char city1[],char city2[]);
-int seatAllocation(int capacity,int tno,int choice);
+void user_validt(char uname[], char pwd[]);
+void search_route(char city1[], char city2[]);
+int seatAllocation(int capacity, int tno, int choice);
 int route_found = 0;
 
-void search_route(char city1[],char city2[])               // fn for searching routes
+void search_route(char city1[], char city2[]) // fn for searching routes
 {
     int f = 0;
     struct routes *temp;
-    if(head == NULL)
+    if (head == NULL)
     {
         printf("No route found");
     }
     else
     {
         temp = head;
-        while(temp != NULL)
+        while (temp != NULL)
         {
-            if((strcmp(city1,temp->origin)==0) || (strcmp(city2,temp->origin)==0))
+            if ((strcmp(city1, temp->origin) == 0) || (strcmp(city2, temp->origin) == 0))
             {
-                f = f+1;
+                f = f + 1;
                 temp = temp->next;
             }
             else
                 temp = temp->next;
         }
-        if (f==2){
+        if (f == 2)
+        {
             printf("\nMatched --- Route found");
             route_found = 1;
         }
-        else{
+        else
+        {
             printf("\nNo Route found");
             route_found = 0;
         }
     }
 }
 
-int seatAllocation(int capacity,int tno,int choice){
-     FILE *fptr;
-     struct train_details t;
-     fptr = fopen("TrainDetails.txt", "a+");
-     if (fptr == NULL)
-     {
-         printf("ERROR! File could not open");
-         exit(1);
-    }
-switch (choice)
+int seatAllocation(int capacity, int tno, int choice)
 {
-case 1:
+    FILE *fptr;
+    struct train_details t;
+    fptr = fopen("TrainDetails.txt", "a+");
+    if (fptr == NULL)
     {
- while (fread(&t, sizeof(struct train_details), 1, fptr)) //loop to iterate over file
-    {
-        if (!strcmpi(t.train_number, tno))
-        {  
-
-            if(t.seats>capacity){
-                t.seats = t.seats - capacity;
-            }
-            else{
-                printf("\n Only %d Seats Left ",t.seats);
-            }
-
-            fclose(fptr);
-            return 1;
-        }
+        printf("ERROR! File could not open");
+        exit(1);
     }
+    switch (choice)
+    {
+    case 1:
+    {
+        while (fread(&t, sizeof(struct train_details), 1, fptr)) //loop to iterate over file
+        {
+            if (!strcmpi(t.train_number, tno))
+            {
 
+                if (t.seats > capacity)
+                {
+                    t.seats = t.seats - capacity;
+                }
+                else
+                {
+                    printf("\n Only %d Seats Left ", t.seats);
+                }
+
+                fclose(fptr);
+                return 1;
+            }
+        }
     }
     break;
 
-    case 2:{
-while (fread(&t, sizeof(struct train_details), 1, fptr)) //loop to iterate over file
+    case 2:
     {
-        if (!strcmpi(t.train_number, tno))
-        {  
+        while (fread(&t, sizeof(struct train_details), 1, fptr)) //loop to iterate over file
+        {
+            if (!strcmpi(t.train_number, tno))
+            {
                 t.seats = t.seats + capacity;
 
-            fclose(fptr);
-            return 1;
+                fclose(fptr);
+                return 1;
+            }
         }
-    }
     }
     break;
 
-    default: fclose(fptr);
+    default:
+        fclose(fptr);
         break;
-}
+    }
 }
 
-int makePayment(int totalFare)                // fn for making payment
+int makePayment(int totalFare) // fn for making payment
 {
-    int ch = 0; 
+    int ch = 0;
     if (totalFare > 0.0)
     {
-        printf("\n\nYour Fare For Tickets is   %lf ",totalFare);
+        printf("\n\nYour Fare For Tickets is   %lf ", totalFare);
         printf("\n\nPress 1 To Pay");
         printf("\nPress 0 To Cancel ");
         scanf("%d", &ch);
@@ -198,87 +204,88 @@ int makePayment(int totalFare)                // fn for making payment
         return 0;
 }
 
-int payment(int age,int amount,int userinput)  // fn for calculating fare 
+int payment(int age, int amount, int userinput) // fn for calculating fare
 {
     switch (userinput)
     {
-    case 1:{                                  //case for adding calc , when passenger added
+    case 1:
+    { //case for adding calc , when passenger added
         totalcost = amount;
-    int fare = 1500;
-    if (age >= 0 && age <= 5)
-    {
-        totalcost = totalcost;    // for less than  5 year age , 0 fare
+        int fare = 1500;
+        if (age >= 0 && age <= 5)
+        {
+            totalcost = totalcost; // for less than  5 year age , 0 fare
+        }
+        else if (age >= 5 && age <= 12)
+        {
+            totalcost = totalcost + (fare / 2); // half fare for 5-12 age passengers
+        }
+        else if (age >= 60)
+        {
+            totalcost = totalcost + (0.4 * fare); // for passengers above 60 , 40 % discount
+        }
+        else
+        {
+            totalcost = fare + totalcost; // others , complete fare
+        }
+        return totalcost;
     }
-    else if (age >= 5 && age <= 12)
-    {
-        totalcost = totalcost + (fare / 2);  // half fare for 5-12 age passengers
-    }
-    else if (age >= 60)
-    {
-        totalcost = totalcost + (0.4 * fare);   // for passengers above 60 , 40 % discount
-    }
-    else{
-        totalcost = fare + totalcost;    // others , complete fare
-    }
-    return totalcost;
-    }
-        break;
-    case 2:{                       // fn for deducting fare from amount when passenger is removed
+    break;
+    case 2:
+    { // fn for deducting fare from amount when passenger is removed
         totalcost = amount;
-    int fare = 1500;
-    if (age >= 0 && age <= 5)
-    {
-        totalcost = totalcost;
+        int fare = 1500;
+        if (age >= 0 && age <= 5)
+        {
+            totalcost = totalcost;
+        }
+        else if (age >= 5 && age <= 12)
+        {
+            totalcost = totalcost - (fare / 2);
+        }
+        else if (age >= 60)
+        {
+            totalcost = totalcost - (0.4 * fare);
+        }
+        else
+        {
+            totalcost = totalcost - fare;
+        }
+        return totalcost;
     }
-    else if (age >= 5 && age <= 12)
-    {
-        totalcost = totalcost - (fare / 2); 
+    break;
     }
-    else if (age >= 60)
-    {
-        totalcost = totalcost - (0.4 * fare); 
-    }
-    else{
-        totalcost = totalcost-fare;
-    }
-    return totalcost;
-    }break;
-    
-}
 }
 
-
-int bookingTrain()                           // fn for making user booking
+int bookingTrain() // fn for making user booking
 {
     int found = 0;
     book[input].amount = 0;
     system("@cls||clear");
     printf("\n *********** Enter Booking Details *********** \n");
-   
+
     int isValid = 1;
-        fflush(stdin);
-        printf("Source - ");          
-        fgets(book[input].From, 30, stdin);
-    
-        fflush(stdin);
-        printf("Destination - ");
-        fgets(book[input].Destination,30,stdin);
-       isValid = 1;
+    fflush(stdin);
+    printf("Source - ");
+    fgets(book[input].From, 30, stdin);
+
+    fflush(stdin);
+    printf("Destination - ");
+    fgets(book[input].Destination, 30, stdin);
+    isValid = 1;
     while (1)
-    {        
+    {
         fflush(stdin);
-        printf("Enter Date in format(dd/mm/yy) :");            //validation check for date
-        scanf("%d/%d/%d", &book[input].date,&book[input].month,&book[input].year);
-            if ((book[input].date >=1) && (book[input].date <=31) && (book[input].month >=1) && (book[input].month <=12)&&(book[input].year==21))
-            {
-                isValid = 1;
-                
-            }
-            else
-            {
-                isValid = 0;
-                
-            }
+        printf("Enter Date in format(dd/mm/yy) :"); //validation check for date
+        scanf("%d/%d/%d", &book[input].date, &book[input].month, &book[input].year);
+        if ((book[input].date >= 1) && (book[input].date <= 31) && (book[input].month >= 1) && (book[input].month <= 12) && (book[input].year == 21))
+        {
+            isValid = 1;
+        }
+        else
+        {
+            isValid = 0;
+        }
         if (isValid)
         {
             break;
@@ -293,18 +300,16 @@ int bookingTrain()                           // fn for making user booking
     while (1)
     {
         fflush(stdin);
-        printf("Enter Time in format(hh:mm) in 24-hour format :");                       //validation check for time
-        scanf("%d:%d", &book[input].hh,&book[input].mm);
-            if (((book[input].hh >=0) && (book[input].hh <=23)) && ((book[input].mm>=0) && (book[input].mm <=59)))
-            {
-                isValid = 1;
-                
-            }
-            else
-            {
-                isValid = 0;
-                
-            }
+        printf("Enter Time in format(hh:mm) in 24-hour format :"); //validation check for time
+        scanf("%d:%d", &book[input].hh, &book[input].mm);
+        if (((book[input].hh >= 0) && (book[input].hh <= 23)) && ((book[input].mm >= 0) && (book[input].mm <= 59)))
+        {
+            isValid = 1;
+        }
+        else
+        {
+            isValid = 0;
+        }
         if (isValid)
         {
             break;
@@ -315,32 +320,32 @@ int bookingTrain()                           // fn for making user booking
         }
     }
 
-    search_route(book[input].From, book[input].Destination);                 // check if route exists or not
-    if(route_found==0)
+    search_route(book[input].From, book[input].Destination); // check if route exists or not
+    if (route_found == 0)
     {
         printf("\nBooking Can't Be Done As No Such Route Exist");
         getch();
         user_menu();
     }
     view_Details();
-        fflush(stdin);
-        printf("\nTrain No. - ");
-        scanf("%d",&book[input].trainNo);         
-    
+    fflush(stdin);
+    printf("\nTrain No. - ");
+    scanf("%d", &book[input].trainNo);
+
     isValid = 1;
     while (1)
     {
         fflush(stdin);
-        printf("Enter Your Contact No. - ");          // contact validations
+        printf("Enter Your Contact No. - "); // contact validations
         gets(book[input].contact);
-        if (!strcmpi(book[input].contact, "0000000000"))       
+        if (!strcmpi(book[input].contact, "0000000000"))
         {
             isValid = 0;
         }
 
         for (int i = 0; i < 10; i++)
         {
-            if ((book[input].contact[i] < 48) || (book[input].contact[i] > 57)) 
+            if ((book[input].contact[i] < 48) || (book[input].contact[i] > 57))
             {
                 isValid = 0;
                 break;
@@ -350,7 +355,8 @@ int bookingTrain()                           // fn for making user booking
                 isValid = 1;
             }
         }
-        if(strlen(book[input].contact)!=10){
+        if (strlen(book[input].contact) != 10)
+        {
             printf("\n Invalid Contact No. \n");
             continue;
         }
@@ -363,20 +369,20 @@ int bookingTrain()                           // fn for making user booking
             printf("\n Contact number should not contain characters, enter again\n");
         }
     }
-    
+
     isValid = 0;
     while (1)
     {
-        fflush(stdin);                               // validation for no of passengers
+        fflush(stdin); // validation for no of passengers
         printf("No. of Passengers - ");
         scanf("%d", &book[input].NoOfPassengers);
-        if (book[input].NoOfPassengers==0 || book[input].NoOfPassengers <0)
+        if (book[input].NoOfPassengers == 0 || book[input].NoOfPassengers < 0)
         {
             isValid = 0;
         }
-        if (book[input].NoOfPassengers >=1 && book[input].NoOfPassengers <=6) //at max 6 passengers can be added under one PNR No.
+        if (book[input].NoOfPassengers >= 1 && book[input].NoOfPassengers <= 6) //at max 6 passengers can be added under one PNR No.
         {
-            isValid = 1;            
+            isValid = 1;
         }
 
         else
@@ -395,85 +401,86 @@ int bookingTrain()                           // fn for making user booking
         }
     }
 
-    book[input].PNR= 2345 + input;
-    
-    printf("\n******* Enter Passenger Details ******* ");                      
-    for (int j = 0; j < book[input].NoOfPassengers;j++)
+    book[input].PNR = 2345 + input;
+
+    printf("\n******* Enter Passenger Details ******* ");
+    for (int j = 0; j < book[input].NoOfPassengers; j++)
     {
         int rerun = 0;
         isValid = 1;
-    while (1)
-    {
-        fflush(stdin);
-        printf("\n\nPassenger's Name - ");
-        scanf("%s",book[input].pt[j].pname);
-        for (int i = 0; i < strlen(book[input].pt[j].pname); i++)
+        while (1)
         {
-            if ((book[input].pt[j].pname[i] >= 65) && (book[input].pt[j].pname[i] <= 112)) //check for characters only in name
+            fflush(stdin);
+            printf("\n\nPassenger's Name - ");
+            scanf("%s", book[input].pt[j].pname);
+            for (int i = 0; i < strlen(book[input].pt[j].pname); i++)
             {
-                isValid = 1;
-                break;
+                if ((book[input].pt[j].pname[i] >= 65) && (book[input].pt[j].pname[i] <= 112)) //check for characters only in name
+                {
+                    isValid = 1;
+                    break;
+                }
+                else if (book[input].pt[j].pname[i] == 32)
+                {
+                    isValid = 1;
+                }
+                else
+                {
+                    isValid = 0;
+                }
             }
-            else if (book[input].pt[j].pname[i]==32){
-                isValid = 1;
+            if (isValid)
+            {
+                break;
             }
             else
             {
-                isValid = 0;
+                printf("\n Name should not contain integer or special characters, enter again\n");
             }
         }
-        if (isValid)
-        {
-            break;
-        }
-        else
-        {
-            printf("\n Name should not contain integer or special characters, enter again\n");
-        }
-    }
-        
+
         while (1)
-    {
-        fflush(stdin);
-        printf("Passengers age: ");
-        scanf("%d", &book[input].pt[j].age);
-        if ((book[input].pt[j].age >=0) && (book[input].pt[j].age < 100))  // validation for age
         {
-            break;
+            fflush(stdin);
+            printf("Passengers age: ");
+            scanf("%d", &book[input].pt[j].age);
+            if ((book[input].pt[j].age >= 0) && (book[input].pt[j].age < 100)) // validation for age
+            {
+                break;
+            }
+            else
+            {
+                printf("\n Invalid Age, enter again\n");
+                continue;
+            }
         }
-        else
-        {
-            printf("\n Invalid Age, enter again\n");
-            continue;
-        }
-    }
 
-    while (1)
-    {
-        fflush(stdin);
-        printf("Passenger's Gender (M/F/O) -  ");
-        scanf("%c", &book[input].pt[j].Gender);   //validation for gender
-        if (book[input].pt[j].Gender =='M' || book[input].pt[j].Gender=='m' || book[input].pt[j].Gender=='F'|| book[input].pt[j].Gender=='f' || book[input].pt[j].Gender=='O'|| book[input].pt[j].Gender=='o') 
+        while (1)
         {
-            break;
+            fflush(stdin);
+            printf("Passenger's Gender (M/F/O) -  ");
+            scanf("%c", &book[input].pt[j].Gender); //validation for gender
+            if (book[input].pt[j].Gender == 'M' || book[input].pt[j].Gender == 'm' || book[input].pt[j].Gender == 'F' || book[input].pt[j].Gender == 'f' || book[input].pt[j].Gender == 'O' || book[input].pt[j].Gender == 'o')
+            {
+                break;
+            }
+            else
+            {
+                printf("\n Invalid Input, enter again\n");
+                continue;
+            }
         }
-        else
-        {
-            printf("\n Invalid Input, enter again\n");
-            continue;
-        }
-    }
 
-        book[input].amount=payment(book[input].pt[j].age,book[input].amount,1);
+        book[input].amount = payment(book[input].pt[j].age, book[input].amount, 1);
         book[input].pt[j].pid = j + 1;
-        printf("\nPassenger Id is %d",book[input].pt[j].pid);
+        printf("\nPassenger Id is %d", book[input].pt[j].pid);
     }
     int ch = 0;
     if (makePayment(book[input].amount))
     {
-        input=input +1;
+        input = input + 1;
         seatAllocation(book[input].NoOfPassengers, book[input].trainNo, 1);
-        printf("\nYour PNR No. Is :  %d", book[input - 1].PNR);            // Payment made or declined
+        printf("\nYour PNR No. Is :  %d", book[input - 1].PNR); // Payment made or declined
         printf("\n!! Reservation Done successfully !!\n ");
         getch();
     }
@@ -486,450 +493,480 @@ int bookingTrain()                           // fn for making user booking
     return 0;
 }
 
-
-
-void show_booking()                   // fn for show booking 
+void show_booking() // fn for show booking
 {
     int choice = 1;
-     int pnr;
-     int check = 0;
-     fflush(stdout);
+    int pnr;
+    int check = 0;
+    fflush(stdout);
     system("@cls||clear");
-     printf("\n --------- Show Booking --------"); 
-     printf("\n 1 Show Particluar Booking");
-     printf("\n 2 Show All Booking");
-     printf("\n 3 Back To User Menu  ");
-     scanf("%d", &choice);
-     if (choice == 1 || choice == 2 || choice == 3)
-     {
-     switch (choice)
-     {
-     case 1:
-     {
-         printf("\n Enter Your Booking PNR No. ");
-         scanf("%d", &pnr);                                         //for one record display
-         for (int i = 0; i < input; i++)
-         {
-             if (book[i].PNR == pnr)
-             {
-                 check = 1;
-                 fflush(stdout);
-                 system("@cls||clear");
-                 printf("\n**************** Booking Details ****************\n");
-                 printf("\nBooking PNR No. is:\t\t%d", book[i].PNR);
-                 printf("\nSource:\t\t\t\t%s", book[i].From);
-                 printf("\nDestination:\t\t\t%s", book[i].Destination);
-                 printf("\nTrainNo:\t\t\t%d", book[i].trainNo);
-                 printf("\nContact:\t\t\t%s", book[i].contact);
-                 for (int j = 0; j < book[i].NoOfPassengers; j++)
-                 {
-                     if(book[i].pt[j].pid !=0)
-                     {
-                     printf("\n\nPassenger Id:\t\t\t%d", book[i].pt[j].pid);
-                     printf("\nPassenger Name:\t\t\t%s", book[i].pt[j].pname);
-                     printf("\nPassenger Age:\t\t\t%d", book[i].pt[j].age);
-                     printf("\nPassenger Gender:\t\t%c", book[i].pt[j].Gender);
-                 }
-                 }
-                 printf("\n\n Total Fare:\t\t\t%d", book[i].amount);
-                 printf("\n\n************************************************\n\n");
-                 getch();
-             }
-         }
-         if (check == 0)
-         {
-             printf("\n!! No Booking Found with this PNR No. !!");
-             show_booking();
-         }
-    }break;
-
-    case 2:{
-        int ch=1,found = 0;
-        system("@cls||clear");
-        for (int i = 0; i < input; i++)
+    printf("\n --------- Show Booking --------");
+    printf("\n 1 Show Particluar Booking");
+    printf("\n 2 Show All Booking");
+    printf("\n 3 Back To User Menu  ");
+    scanf("%d", &choice);
+    if (choice == 1 || choice == 2 || choice == 3)
+    {
+        switch (choice)
         {
-            if (book[i].PNR != 0)             // for all bookings
-            { 
-                fflush(stdout);
-                found = 1;
-                if(ch==1){
-                    printf("\n ************** Booking Details **************\n");
-                    ch++;
-                }
-                printf("\nBooking PNR No. is:\t\t%d", book[i].PNR);
-                printf("\nSource:\t\t\t\t%s", book[i].From);
-                printf("Destination:\t\t\t%s", book[i].Destination);
-                printf("TrainNo:\t\t\t%d", book[i].trainNo);
-                printf("\nContact:\t\t\t%s", book[i].contact);
-                for (int j = 0; j < book[i].NoOfPassengers; j++)
+        case 1:
+        {
+            printf("\n Enter Your Booking PNR No. ");
+            scanf("%d", &pnr); //for one record display
+            for (int i = 0; i < input; i++)
+            {
+                if (book[i].PNR == pnr)
                 {
-                    if (book[i].pt[j].pid != 0)
+                    check = 1;
+                    fflush(stdout);
+                    system("@cls||clear");
+                    printf("\n**************** Booking Details ****************\n");
+                    printf("\nBooking PNR No. is:\t\t%d", book[i].PNR);
+                    printf("\nSource:\t\t\t\t%s", book[i].From);
+                    printf("\nDestination:\t\t\t%s", book[i].Destination);
+                    printf("\nTrainNo:\t\t\t%d", book[i].trainNo);
+                    printf("\nContact:\t\t\t%s", book[i].contact);
+                    for (int j = 0; j < book[i].NoOfPassengers; j++)
                     {
-                        printf("\n\nPassenger Id:\t\t\t%d", book[i].pt[j].pid);
-                        printf("\nPassenger Name:\t\t\t%s", book[i].pt[j].pname);
-                        printf("\nPassenger Age:\t\t\t%d", book[i].pt[j].age);
-                        printf("\nPassenger Gender:\t\t%c", book[i].pt[j].Gender);
+                        if (book[i].pt[j].pid != 0)
+                        {
+                            printf("\n\nPassenger Id:\t\t\t%d", book[i].pt[j].pid);
+                            printf("\nPassenger Name:\t\t\t%s", book[i].pt[j].pname);
+                            printf("\nPassenger Age:\t\t\t%d", book[i].pt[j].age);
+                            printf("\nPassenger Gender:\t\t%c", book[i].pt[j].Gender);
+                        }
                     }
+                    printf("\n\n Total Fare:\t\t\t%d", book[i].amount);
+                    printf("\n\n************************************************\n\n");
+                    getch();
                 }
-                printf("\n\n Total Fare:\t\t\t%d", book[i].amount);
-                printf("\n----------------------------------------------\n");
             }
+            if (check == 0)
+            {
+                printf("\n!! No Booking Found with this PNR No. !!");
+                show_booking();
+            }
+        }
+        break;
+
+        case 2:
+        {
+            int ch = 1, found = 0;
+            system("@cls||clear");
+            for (int i = 0; i < input; i++)
+            {
+                if (book[i].PNR != 0) // for all bookings
+                {
+                    fflush(stdout);
+                    found = 1;
+                    if (ch == 1)
+                    {
+                        printf("\n ************** Booking Details **************\n");
+                        ch++;
+                    }
+                    printf("\nBooking PNR No. is:\t\t%d", book[i].PNR);
+                    printf("\nSource:\t\t\t\t%s", book[i].From);
+                    printf("Destination:\t\t\t%s", book[i].Destination);
+                    printf("TrainNo:\t\t\t%d", book[i].trainNo);
+                    printf("\nContact:\t\t\t%s", book[i].contact);
+                    for (int j = 0; j < book[i].NoOfPassengers; j++)
+                    {
+                        if (book[i].pt[j].pid != 0)
+                        {
+                            printf("\n\nPassenger Id:\t\t\t%d", book[i].pt[j].pid);
+                            printf("\nPassenger Name:\t\t\t%s", book[i].pt[j].pname);
+                            printf("\nPassenger Age:\t\t\t%d", book[i].pt[j].age);
+                            printf("\nPassenger Gender:\t\t%c", book[i].pt[j].Gender);
+                        }
+                    }
+                    printf("\n\n Total Fare:\t\t\t%d", book[i].amount);
+                    printf("\n----------------------------------------------\n");
+                }
+            }
+            if (found == 1)
+            {
+                printf("\n*****************************************************\n");
+                getch();
+            }
+            else
+            {
+                printf("\n No Booking Record Found");
+                getch();
+            }
+            show_booking();
+        }
+        break;
+        case 3:
+        {
+            user_menu();
+        }
+        break;
+        }
     }
-    if(found==1){
-            printf("\n*****************************************************\n");
-            getch();
-    }
-    else{
-        printf("\n No Booking Record Found");
+
+    else
+    {
+        printf(" Invalid Input");
         getch();
+        show_booking();
     }
-    show_booking();
-    }
-    break;
-    case 3:{
-        user_menu();
-    }
-    break;
-     }
 }
 
-else{
-          printf(" Invalid Input");
-          getch();
-          show_booking();
-     }
-
-}
-
-
-void cancelBooking(){                     // fn for cancel booking
-     int pnr;
+void cancelBooking()
+{ // fn for cancel booking
+    int pnr;
     int check = 0;
     printf("\n Enter Your Booking PNR No. ");
-    scanf("%d",&pnr);
-    for (int i = 0; i < input;i++){
+    scanf("%d", &pnr);
+    for (int i = 0; i < input; i++)
+    {
         if (book[i].PNR == pnr)
         {
             check = 1;
             book[i].PNR = 0;
-             seatAllocation(book[i].NoOfPassengers, book[i].trainNo, 2);
+            seatAllocation(book[i].NoOfPassengers, book[i].trainNo, 2);
             printf("\n !! Your Booking Is Cancelled !!");
             printf("\n\n Note: Your amount will be refunded within 2 days of Cancel the Booking");
             getch();
+        }
     }
-    }
-    if(check==0){
+    if (check == 0)
+    {
         printf("\nInvalid PNR Entered.\nPlease Try Again.");
         cancelBooking();
     }
-    
-}  
+}
 
-void modifyBooking()             // fn for modify booking
-{   
-    int choice = 1,booking_found=0;
-     int pnr;
-     int check = 0;
-      system("@cls||clear");
-     printf("\n------- Booking Modify Menu -------");
-     printf("\n 1 Modify Passenger's Details");                 // modify menu
-     printf("\n 2 Back To User Menu  ");
-     scanf("%d", &choice);
-     if (choice == 1 || choice == 2 || choice == 3)
-     {
-     switch (choice)
-     {
-     case 1:
-     {
-         printf("\n Enter Your Booking PNR No. ");
-         scanf("%d", &pnr);
-         for (int ch = 0; ch < input; ch++)
-         {
-             if (book[ch].PNR == pnr)
-             {
-                 int a = 1;
-                 check = 1;
-                 booking_found = 1;
-                 system("@cls||clear");
-                 printf("\n 1 Add New Passenger");
-                 printf("\n 2 Remove Existing Passenger");
-                 printf("\n 3 Edit Existing Passenger Details");
-                 printf("\n 4 Back To User Menu ");
-                 scanf("%d", &a);
-                  system("@cls||clear");
-                 if(a ==1 || a==2 || a==3 || a==4){
-                     switch (a)
-                     {
-                     case 1: {                                                                           //case for adding passengers
-                         if(book[ch].NoOfPassengers>=6){
-                             printf("\nNOTE : Only 6 Passenger's can be added under one PNR No.");
-                         }
-                    else {
-                         int len = book[ch].NoOfPassengers;
-                         book[ch].NoOfPassengers = book[ch].NoOfPassengers + 1;
-                         printf("\n******* Enter Passenger Details ******* ");
-                         for (int j = len; j < book[ch].NoOfPassengers; j++)
-                         {
-                             int rerun = 0;
-                             int isValid = 1;
-                             while (1)
-                             {
-                                 fflush(stdin);
-                                 printf("\n\nPassenger's Name - ");
-                                 scanf("%s", book[ch].pt[j].pname);
-                                 for (int i = 0; i < strlen(book[ch].pt[j].pname); i++)
-                                 {
-                                     if ((book[ch].pt[j].pname[i] >= 65) && (book[ch].pt[j].pname[i] <= 112)) //check for characters only in name
-                                     {
-                                         isValid = 1;
-                                         break;
-                                     }
-                                     else if (book[ch].pt[j].pname[i] == 32)
-                                     {
-                                         isValid = 1;
-                                     }
-                                     else
-                                     {
-                                         isValid = 0;
-                                     }
-                                 }
-                                 if (isValid)
-                                 {
-                                     break;
-                                 }
-                                 else
-                                 {
-                                     printf("\n Name should not contain integer or special characters, enter again\n");
-                                 }
-                             }
+void modifyBooking() // fn for modify booking
+{
+    int choice = 1, booking_found = 0;
+    int pnr;
+    int check = 0;
+    system("@cls||clear");
+    printf("\n------- Booking Modify Menu -------");
+    printf("\n 1 Modify Passenger's Details"); // modify menu
+    printf("\n 2 Back To User Menu  ");
+    scanf("%d", &choice);
+    if (choice == 1 || choice == 2 || choice == 3)
+    {
+        switch (choice)
+        {
+        case 1:
+        {
+            printf("\n Enter Your Booking PNR No. ");
+            scanf("%d", &pnr);
+            for (int ch = 0; ch < input; ch++)
+            {
+                if (book[ch].PNR == pnr)
+                {
+                    int a = 1;
+                    check = 1;
+                    booking_found = 1;
+                    system("@cls||clear");
+                    printf("\n 1 Add New Passenger");
+                    printf("\n 2 Remove Existing Passenger");
+                    printf("\n 3 Edit Existing Passenger Details");
+                    printf("\n 4 Back To User Menu ");
+                    scanf("%d", &a);
+                    system("@cls||clear");
+                    if (a == 1 || a == 2 || a == 3 || a == 4)
+                    {
+                        switch (a)
+                        {
+                        case 1:
+                        { //case for adding passengers
+                            if (book[ch].NoOfPassengers >= 6)
+                            {
+                                printf("\nNOTE : Only 6 Passenger's can be added under one PNR No.");
+                            }
+                            else
+                            {
+                                int len = book[ch].NoOfPassengers;
+                                book[ch].NoOfPassengers = book[ch].NoOfPassengers + 1;
+                                printf("\n******* Enter Passenger Details ******* ");
+                                for (int j = len; j < book[ch].NoOfPassengers; j++)
+                                {
+                                    int rerun = 0;
+                                    int isValid = 1;
+                                    while (1)
+                                    {
+                                        fflush(stdin);
+                                        printf("\n\nPassenger's Name - ");
+                                        scanf("%s", book[ch].pt[j].pname);
+                                        for (int i = 0; i < strlen(book[ch].pt[j].pname); i++)
+                                        {
+                                            if ((book[ch].pt[j].pname[i] >= 65) && (book[ch].pt[j].pname[i] <= 112)) //check for characters only in name
+                                            {
+                                                isValid = 1;
+                                                break;
+                                            }
+                                            else if (book[ch].pt[j].pname[i] == 32)
+                                            {
+                                                isValid = 1;
+                                            }
+                                            else
+                                            {
+                                                isValid = 0;
+                                            }
+                                        }
+                                        if (isValid)
+                                        {
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            printf("\n Name should not contain integer or special characters, enter again\n");
+                                        }
+                                    }
 
-                             while (1)
-                             {
-                                 fflush(stdin);
-                                 printf("Passengers age: ");
-                                 scanf("%d", &book[ch].pt[j].age);
-                                 if ((book[ch].pt[j].age >= 0) && (book[ch].pt[j].age < 100))   // constraints for age
-                                 {
-                                     break;
-                                 }
-                                 else
-                                 {
-                                     printf("\n Invalid Age, enter again\n");
-                                     continue;
-                                 }
-                             }
+                                    while (1)
+                                    {
+                                        fflush(stdin);
+                                        printf("Passengers age: ");
+                                        scanf("%d", &book[ch].pt[j].age);
+                                        if ((book[ch].pt[j].age >= 0) && (book[ch].pt[j].age < 100)) // constraints for age
+                                        {
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            printf("\n Invalid Age, enter again\n");
+                                            continue;
+                                        }
+                                    }
 
-                             while (1)
-                             {
-                                 fflush(stdin);
-                                 printf("Passenger's Gender (M/F/O) -  ");
-                                 scanf("%c", &book[ch].pt[j].Gender);               //constraints for gender
-                                 if (book[ch].pt[j].Gender == 'M' || book[ch].pt[j].Gender == 'm' || book[ch].pt[j].Gender == 'F' || book[ch].pt[j].Gender == 'f' || book[ch].pt[j].Gender == 'O' || book[ch].pt[j].Gender == 'o')
-                                 {
-                                     break;
-                                 }
-                                 else
-                                 {
-                                     printf("\n Invalid Input, enter again\n");
-                                     continue;
-                                 }
-                             }
-                             book[ch].pt[j].pid = j + 1;
-                             seatAllocation(book[ch].NoOfPassengers, book[ch].trainNo, 1);
-                             if(book[ch].pt[j].age >5 ){
-                             book[ch].amount = payment(book[ch].pt[j].age, book[ch].amount,1);
-                             printf("\n\nPassenger's Id is %d", book[ch].pt[j].pid);
-                             printf("\nUpdated Amount is %d", book[ch].amount);                //updated amount
-                             }
-                             else{
-                                 printf("\nAs the passenger's Age is less than 5, so no change in amount");
-                                 printf("\n Total fare is %d", book[ch].amount);             //no change in amount if less than 5 year
-                             }
-                             printf("\n\n!! Details Updated Successfully !!\n");
-                             input++;
-                     }
-                     }
-                     getch();
-                     modifyBooking();
-                 }
-                 break;
+                                    while (1)
+                                    {
+                                        fflush(stdin);
+                                        printf("Passenger's Gender (M/F/O) -  ");
+                                        scanf("%c", &book[ch].pt[j].Gender); //constraints for gender
+                                        if (book[ch].pt[j].Gender == 'M' || book[ch].pt[j].Gender == 'm' || book[ch].pt[j].Gender == 'F' || book[ch].pt[j].Gender == 'f' || book[ch].pt[j].Gender == 'O' || book[ch].pt[j].Gender == 'o')
+                                        {
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            printf("\n Invalid Input, enter again\n");
+                                            continue;
+                                        }
+                                    }
+                                    book[ch].pt[j].pid = j + 1;
+                                    seatAllocation(book[ch].NoOfPassengers, book[ch].trainNo, 1);
+                                    if (book[ch].pt[j].age > 5)
+                                    {
+                                        book[ch].amount = payment(book[ch].pt[j].age, book[ch].amount, 1);
+                                        printf("\n\nPassenger's Id is %d", book[ch].pt[j].pid);
+                                        printf("\nUpdated Amount is %d", book[ch].amount); //updated amount
+                                    }
+                                    else
+                                    {
+                                        printf("\nAs the passenger's Age is less than 5, so no change in amount");
+                                        printf("\n Total fare is %d", book[ch].amount); //no change in amount if less than 5 year
+                                    }
+                                    printf("\n\n!! Details Updated Successfully !!\n");
+                                    input++;
+                                }
+                            }
+                            getch();
+                            modifyBooking();
+                        }
+                        break;
 
-                 case 2 :{
-                     int id,pos,value=0;
-                     printf("\nEnter Passenger's Id");           //case for removing passenger
-                     scanf("%d", &id);
-                     for (int i = 0; i < book[ch].NoOfPassengers;i++){  
-                         if(book[ch].pt[i].pid==id) {
-                             pos = i;                        
-                         }
-                         if(book[ch].pt[i].pid !=id && book[ch].pt[i].pid !=0)
-                             {value++;}
-                          }
-                          book[ch].pt[pos].pid = 0;
-                         if(value >=1) 
-                         {
-                             seatAllocation(book[ch].NoOfPassengers, book[ch].trainNo, 2);
-                             book[ch].amount=payment(book[ch].pt[pos].age, book[ch].amount, 2);
-                             printf("\nPassenger Removed Successfully !!");
-                             printf("\nUpdated Fare is %d", book[ch].amount);
-                             printf("\n\nNOTE: Your amount will be refunded within 2 days\n");
-                         }
-                         else{
-                             printf("\nWe can't remove this passenger , as it is the only passenger left. \nPlease cancel the Booking \n");
-                         }
-                         getch();
-                          system("@cls||clear");
-                         modifyBooking();
+                        case 2:
+                        {
+                            int id, pos, value = 0;
+                            printf("\nEnter Passenger's Id"); //case for removing passenger
+                            scanf("%d", &id);
+                            for (int i = 0; i < book[ch].NoOfPassengers; i++)
+                            {
+                                if (book[ch].pt[i].pid == id)
+                                {
+                                    pos = i;
+                                }
+                                if (book[ch].pt[i].pid != id && book[ch].pt[i].pid != 0)
+                                {
+                                    value++;
+                                }
+                            }
+                            book[ch].pt[pos].pid = 0;
+                            if (value >= 1)
+                            {
+                                seatAllocation(book[ch].NoOfPassengers, book[ch].trainNo, 2);
+                                book[ch].amount = payment(book[ch].pt[pos].age, book[ch].amount, 2);
+                                printf("\nPassenger Removed Successfully !!");
+                                printf("\nUpdated Fare is %d", book[ch].amount);
+                                printf("\n\nNOTE: Your amount will be refunded within 2 days\n");
+                            }
+                            else
+                            {
+                                printf("\nWe can't remove this passenger , as it is the only passenger left. \nPlease cancel the Booking \n");
+                            }
+                            getch();
+                            system("@cls||clear");
+                            modifyBooking();
+                        }
+                        break;
+                        case 3:
+                        {
+                            int id, isValid, rerun, age, found = 0;
+                            system("@cls||clear"); //editing existing passenger
+                            printf("\nEnter Passenger's Id");
+                            scanf("%d", &id); //validation
+                            for (int j = 0; j < book[ch].NoOfPassengers; j++)
+                            {
+                                if (book[ch].pt[j].pid == id)
+                                {
+                                    found = 1;
+                                    age = book[ch].pt[j].age;
+                                    book[ch].amount = payment(book[ch].pt[j].age, book[ch].amount, 2);
+                                    rerun = 0;
+                                    isValid = 1;
+                                    while (1)
+                                    {
+                                        fflush(stdin);
+                                        printf("\n\nPassenger's Name - ");
+                                        scanf("%s", book[ch].pt[j].pname);
+                                        for (int i = 0; i < strlen(book[ch].pt[j].pname); i++)
+                                        {
+                                            if ((book[ch].pt[j].pname[i] >= 65) && (book[ch].pt[j].pname[i] <= 112)) //check for characters only in name
+                                            {
+                                                isValid = 1;
+                                                break;
+                                            }
+                                            else if (book[ch].pt[j].pname[i] == 32)
+                                            {
+                                                isValid = 1;
+                                            }
+                                            else
+                                            {
+                                                isValid = 0;
+                                            }
+                                        }
+                                        if (isValid)
+                                        {
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            printf("\n Name should not contain integer or special characters, enter again\n");
+                                        }
+                                    }
+                                    while (1)
+                                    {
+                                        fflush(stdin);
+                                        printf("Passengers age: ");
+                                        scanf("%d", &book[ch].pt[j].age);
+                                        if ((book[ch].pt[j].age >= 0) && (book[ch].pt[j].age < 100)) //validation for age
+                                        {
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            printf("\n Invalid Age, enter again\n");
+                                            getch();
+                                            continue;
+                                        }
+                                    }
+                                    while (1)
+                                    {
+                                        fflush(stdin);
+                                        printf("Passenger's Gender (M/F/O) -  ");
+                                        scanf("%c", &book[ch].pt[j].Gender); //validation for gender
+                                        if (book[ch].pt[j].Gender == 'M' || book[ch].pt[j].Gender == 'm' || book[ch].pt[j].Gender == 'F' || book[ch].pt[j].Gender == 'f' || book[ch].pt[j].Gender == 'O' || book[ch].pt[j].Gender == 'o')
+                                        {
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            printf("\n Invalid Input, enter again\n");
+                                            continue;
+                                        }
+                                    }
+                                    if (book[ch].pt[j].age != age)
+                                    {
+                                        book[ch].amount = payment(book[ch].pt[j].age, book[ch].amount, 1);
+                                        printf("Updated Amount Is %d", book[ch].amount); //updated amount
+                                        getch();
+                                    }
+                                    else
+                                    {
+                                        printf("\nNo Change In Fare.\nYour Fare is : lf", book[ch].amount);
+                                        getch();
+                                    }
+                                }
+                            }
+
+                            if (found == 0)
+                            {
+                                printf("\nPassenger Id didn't match");
+                                getch();
+                            }
+                            else
+                            {
+                                system("@cls||clear");
+                                modifyBooking();
+                            }
+                        }
+                        break;
+
+                        case 4:
+                        {
+                            system("@cls||clear");
+                            modifyBooking();
+                        }
+                        break;
+                        }
+                    }
                 }
-                 break;
-                 case 3 :{
-                     int id,isValid,rerun,age,found=0;
-                    system("@cls||clear");                      //editing existing passenger 
-                     printf("\nEnter Passenger's Id");
-                     scanf("%d", &id);       //validation
-                     for (int j = 0; j < book[ch].NoOfPassengers;j++){
-                         if(book[ch].pt[j].pid==id){
-                             found = 1;
-                             age = book[ch].pt[j].age;
-                             book[ch].amount=payment(book[ch].pt[j].age, book[ch].amount, 2);
-                            rerun = 0;
-                             isValid = 1;
-                             while (1)
-    {
-        fflush(stdin);
-        printf("\n\nPassenger's Name - ");
-        scanf("%s",book[ch].pt[j].pname);
-        for (int i = 0; i < strlen(book[ch].pt[j].pname); i++)
-        {
-            if ((book[ch].pt[j].pname[i] >= 65) && (book[ch].pt[j].pname[i] <= 112)) //check for characters only in name
+            }
+            if (booking_found == 0)
             {
-                isValid = 1;
-                break;
-            }
-            else if (book[ch].pt[j].pname[i]==32){
-                isValid = 1;
-            }
-            else
-            {
-                isValid = 0;
-            }
-        }
-        if (isValid)
-        {
-            break;
-        }
-        else
-        {
-            printf("\n Name should not contain integer or special characters, enter again\n");
-        }
-    }
-      while (1)
-    {
-        fflush(stdin);
-        printf("Passengers age: ");
-        scanf("%d", &book[ch].pt[j].age);
-        if ((book[ch].pt[j].age >=0) && (book[ch].pt[j].age < 100))             //validation for age 
-        {
-            break;
-        }
-        else
-        {
-            printf("\n Invalid Age, enter again\n");
-            getch();
-            continue;
-        }
-    }
-    while (1)
-    {
-        fflush(stdin);
-        printf("Passenger's Gender (M/F/O) -  ");
-        scanf("%c", &book[ch].pt[j].Gender);               //validation for gender
-        if (book[ch].pt[j].Gender =='M' || book[ch].pt[j].Gender=='m' || book[ch].pt[j].Gender=='F'|| book[ch].pt[j].Gender=='f' || book[ch].pt[j].Gender=='O'|| book[ch].pt[j].Gender=='o') 
-        {
-            break;
-        }
-        else
-        {
-            printf("\n Invalid Input, enter again\n");
-            continue;
-        }
-    }
-            if(book[ch].pt[j].age !=age){
-                book[ch].amount=payment(book[ch].pt[j].age,book[ch].amount,1);
-                printf("Updated Amount Is %d", book[ch].amount);                 //updated amount
+                printf("\nInvalid PNR No. Entered.");
                 getch();
             }
-            else{
-                printf("\nNo Change In Fare.\nYour Fare is : lf", book[ch].amount);
-                getch();
-            }
-            
+        }
+        break;
+
+        case 2:
+        {
+            system("@cls||clear");
+            user_menu(); //return back to menu
+        }
+        break;
+        }
+        if (check == 0)
+        {
+            printf("\nNo Booking Found With This PNR No.");
+            modifyBooking();
+        }
     }
-                    }  
-
-                     if(found==0){
-                         printf("\nPassenger Id didn't match");
-                         getch();
-                     } 
-                     else{
-                          system("@cls||clear");
-                         modifyBooking();
-                     }   
-                 }break;
-
-                 case 4 :{
-                      system("@cls||clear");
-                     modifyBooking();
-                 }
-                     break;
-                     }
-                 }
-             }
-         }
-         if(booking_found==0){
-             printf("\nInvalid PNR No. Entered.");
-             getch();
-         }
-         }
-     break;
-
-             case 2:{ system("@cls||clear");
-                 user_menu();                 //return back to menu
-             }
-             break;
-             }
-             if(check==0){
-                 printf("\nNo Booking Found With This PNR No.");
-                 modifyBooking();
-             }
-     }
-     else{
-         printf("\n!! Invalid Input !!");
-         getchar();
-          system("@cls||clear");
-         modifyBooking();
-     }
-
+    else
+    {
+        printf("\n!! Invalid Input !!");
+        getchar();
+        system("@cls||clear");
+        modifyBooking();
+    }
 }
 
 //User Password validation
-int passwd_valid(char uname[10],char pwd[12])
+int passwd_valid(char uname[10], char pwd[12])
 {
     FILE *infile;
     struct user_details ud;
-    infile = fopen("userdets.txt","a+");
-    if( infile == NULL)
+    infile = fopen("userdets.txt", "a+");
+    if (infile == NULL)
     {
-        fprintf(stderr,"\nError opening file\n");
+        fprintf(stderr, "\nError opening file\n");
         return -1;
     }
 
     //read the contents from the file
-    while (fread(&ud,sizeof(struct user_details),1,infile))
+    while (fread(&ud, sizeof(struct user_details), 1, infile))
     {
-        if (!strcmp(ud.user_name,uname))
+        if (!strcmp(ud.user_name, uname))
         {
-            if(!strcmp(ud.password,pwd))
+            if (!strcmp(ud.password, pwd))
             {
                 printf("Login Successfull!!!");
                 return 1;
@@ -941,18 +978,18 @@ int passwd_valid(char uname[10],char pwd[12])
         }
     }
     printf("Invalid credentials. Please check again.");
-    return 0;    
+    return 0;
 }
 
 //Admin Password validation
-int admin_passwd_valid(char uname[10],char pwd[12])
+int admin_passwd_valid(char uname[10], char pwd[12])
 {
     /*Admin Details:-
         username - test
         password - rail */
-    if(!strcmp(uname,"test"))
+    if (!strcmp(uname, "test"))
     {
-        if(!strcmp(pwd,"rail"))
+        if (!strcmp(pwd, "rail"))
         {
             return 1;
         }
@@ -968,12 +1005,11 @@ int admin_passwd_valid(char uname[10],char pwd[12])
     return 0;
 }
 
-
-void user_menu()                             //user menu 
+void user_menu() //user menu
 {
-    int a,found;
+    int a, found;
     char c;
-    char c1[15],c2[15];
+    char c1[15], c2[15];
     printf("\n -------------- User Menu -------------");
     do
     {
@@ -990,39 +1026,40 @@ void user_menu()                             //user menu
         switch (a)
         {
         case 1:
-        system("@cls||clear");
+            system("@cls||clear");
             bookingTrain();
             break;
         case 2:
-        system("@cls||clear");
+            system("@cls||clear");
             modifyBooking();
             break;
         case 3:
-        system("@cls||clear");
+            system("@cls||clear");
             cancelBooking();
             break;
         case 4:
-        system("@cls||clear");
+            system("@cls||clear");
             show_booking();
             break;
         case 5:
             system("@cls||clear");
             fflush(stdin);
             printf("Enter the first city: ");
-            fgets(c1,15,stdin);
+            fgets(c1, 15, stdin);
             printf("Enter the second city: ");
-            fgets(c2,15,stdin);
-            search_route(c1,c2);
+            fgets(c2, 15, stdin);
+            search_route(c1, c2);
             break;
         case 6:
-        system("@cls||clear");
+            system("@cls||clear");
             main();
             break;
-        default:{
+        default:
+        {
             printf("Wrong choice entered , Try again");
             a = 0;
         }
-            break;
+        break;
         }
         c = 'Y';
 
@@ -1107,7 +1144,6 @@ void view_Details()
     fclose(fptr);
 }
 
-
 //Admin Main Menu Panel
 void admin_menu()
 {
@@ -1121,49 +1157,49 @@ void admin_menu()
         printf("\n2. Display train details");
         printf("\n3. Log Out");
         printf("Enter your choice: ");
-        scanf("%d",&ch);
-        switch(ch)
+        scanf("%d", &ch);
+        switch (ch)
         {
-            case 1:
+        case 1:
             system("@cls||clear");
-                add_train();
-                printf("\n\n\n\n");
-                routes_menu();
-                break;
-            case 2:
+            add_train();
+            printf("\n\n\n\n");
+            routes_menu();
+            break;
+        case 2:
             system("@cls||clear");
-                view_Details();
-                break;
-            case 3:
+            view_Details();
+            break;
+        case 3:
 
-                printf("Succesfully logged out");
-                break;
+            printf("Succesfully logged out");
+            break;
         }
         fflush(stdin);
         printf("Do you wish to continue?(Please enter Y or y to continue) ");
-        scanf("%c",&c);
-    }while (c == 'Y' || c == 'y');
+        scanf("%c", &c);
+    } while (c == 'Y' || c == 'y');
 }
 //User validation
-void user_validt(char uname[],char pwd[])
+void user_validt(char uname[], char pwd[])
 {
     FILE *log;
-    log = fopen("login.txt","r");
+    log = fopen("login.txt", "r");
     if (log == NULL)
     {
         fputs("Error at opening File!", stderr);
         exit(1);
     }
     struct user_details l;
-    while(fread(&l,sizeof(struct user_details),1,log))
+    while (fread(&l, sizeof(struct user_details), 1, log))
     {
-        if(strcmp(uname,l.user_name) ==0 && strcmp(pwd,l.password)==0)
-        {   
+        if (strcmp(uname, l.user_name) == 0 && strcmp(pwd, l.password) == 0)
+        {
             printf("\nSuccessful Login\n");
             getch();
             user_menu();
         }
-        else 
+        else
         {
             printf("\nIncorrect Login Details\nPlease enter the correct credentials\n");
         }
@@ -1174,35 +1210,35 @@ void user_validt(char uname[],char pwd[])
 //User Login
 void login()
 {
-    char username[30],password[20];
+    char username[30], password[20];
     printf("\nPlease Enter your login credentials below\n\n");
     printf("Username:");
-    scanf("%s",username);
+    scanf("%s", username);
     printf("\nPassword:");
-    scanf("%s",password);
-    user_validt(username,password);
+    scanf("%s", password);
+    user_validt(username, password);
     getch();
 }
 
 //Main Login panel
-void login_main(int n)          // 0 -- Normal User, 1 -- Admin 
+void login_main(int n) // 0 -- Normal User, 1 -- Admin
 {
     int res;
     char us_name[10];
     char pwd[12];
     printf("\nEnter the user name: ");
-    scanf("%s",us_name);
+    scanf("%s", us_name);
     printf("\nEnter the password: ");
-    scanf("%s",pwd);
+    scanf("%s", pwd);
     if (n == 1)
     {
-        res = admin_passwd_valid(us_name,pwd);
+        res = admin_passwd_valid(us_name, pwd);
     }
-    else if(n == 0)
+    else if (n == 0)
     {
         // res = user_passwd_valid(us_name,pwd);
     }
-    if(res == 1)
+    if (res == 1)
         admin_menu();
     else
     {
@@ -1218,74 +1254,75 @@ void user_reg()
     int isValid = 1;
     // char firstname[15];
     FILE *log;
-    struct user_details l;    
+    struct user_details l;
     system("@cls||clear");
     printf("\n**********Enter details for registration.**********\n");
-    while(1) //Firstname
+    while (1) //Firstname
     {
         printf("\nEnter First Name:\n");
-        scanf("%s",&l.first_name);
+        scanf("%s", &l.first_name);
         for (int i = 0; i < strlen(l.first_name); i++)
+        {
+            if ((l.first_name[i] >= 65) && (l.first_name[i] <= 112)) //check for characters only in name
             {
-                if ((l.first_name[i] >= 65) && (l.first_name[i] <= 112)) //check for characters only in name
-                {
-                    isValid = 1;
-                    break;
-                }
-                else if (l.first_name[i] == 32){
-                    isValid = 1;
-                }
-                else
-                {
-                    isValid = 0;
-                }
-            }
-            if (isValid)
-            {
+                isValid = 1;
                 break;
+            }
+            else if (l.first_name[i] == 32)
+            {
+                isValid = 1;
             }
             else
             {
-                printf("\n Name should not contain integer or special characters, enter again\n");
+                isValid = 0;
             }
-
+        }
+        if (isValid)
+        {
+            break;
+        }
+        else
+        {
+            printf("\n Name should not contain integer or special characters, enter again\n");
+        }
     }
 
-    while(1) //Lastname
+    while (1) //Lastname
     {
         printf("\nEnter Surname:\n");
-        scanf("%s",&l.last_name);
+        scanf("%s", &l.last_name);
         for (int i = 0; i < strlen(l.last_name); i++)
+        {
+            if ((l.last_name[i] >= 65) && (l.last_name[i] <= 112)) //check for characters only in name
             {
-                if ((l.last_name[i] >= 65) && (l.last_name[i] <= 112)) //check for characters only in name
-                {
-                    isValid = 1;
-                    break;
-                }
-                else if (l.last_name[i] == 32){
-                    isValid = 1;
-                }
-                else
-                {
-                    isValid = 0;
-                }
-            }
-            if (isValid)
-            {
+                isValid = 1;
                 break;
+            }
+            else if (l.last_name[i] == 32)
+            {
+                isValid = 1;
             }
             else
             {
-                printf("\n Last name should not contain integer or special characters, enter again\n");
+                isValid = 0;
             }
-
+        }
+        if (isValid)
+        {
+            break;
+        }
+        else
+        {
+            printf("\n Last name should not contain integer or special characters, enter again\n");
+        }
     }
 
     printf("\nEnter Gender (M=male, F=female, O=Other):\n");
-    while(1){
+    while (1)
+    {
         fflush(stdin);
-        scanf("%c",&l.gender);
-        if(l.gender =='M' || l.gender=='m' || l.gender=='F'|| l.gender=='f' || l.gender=='O'|| l.gender=='o')
+        scanf("%c", &l.gender);
+        if (l.gender == 'M' || l.gender == 'm' || l.gender == 'F' || l.gender == 'f' || l.gender == 'O' || l.gender == 'o')
         {
             break;
         }
@@ -1295,13 +1332,13 @@ void user_reg()
             continue;
         }
     }
-    
+
     printf("\nEnter Your age:\n");
-    while(1)
+    while (1)
     {
         fflush(stdin);
         scanf("%d", &l.age);
-        if ((l.age >=18) && (l.age< 100)) 
+        if ((l.age >= 18) && (l.age < 100))
         {
             break;
         }
@@ -1312,15 +1349,15 @@ void user_reg()
         }
     }
 
-    while(1)
+    while (1)
     {
         printf("\nEnter Your contact number:\n");
-        scanf("%s",&l.contact_number);
+        scanf("%s", &l.contact_number);
 
         if (!strcmpi(l.contact_number, "0000000000"))
-            {
-                isValid = 0;
-            }
+        {
+            isValid = 0;
+        }
 
         for (int i = 0; i < 10; i++)
         {
@@ -1334,7 +1371,8 @@ void user_reg()
                 isValid = 1;
             }
         }
-        if(strlen(l.contact_number)!=10){
+        if (strlen(l.contact_number) != 10)
+        {
             printf("\n Invalid Contact No. \n");
             continue;
         }
@@ -1350,19 +1388,19 @@ void user_reg()
 
     printf("\n\nPlease choose a username and password as credentials for system login.\nEnsure the username is no more than 30 characters long.\nEnsure your password is at least 8 characters long and contains lowercase, uppercase, numerical and special character values.");
     printf("\nEnter Username:\n");
-    scanf(" %s",&l.user_name);
+    scanf(" %s", &l.user_name);
     printf("\nEnter Password:\n");
-    scanf(" %s",&l.password);
-    printf("Thank you for registration.\nNow \n"); 
-    log=fopen("login.txt","a+");
+    scanf(" %s", &l.password);
+    printf("Thank you for registration.\nNow \n");
+    log = fopen("login.txt", "a+");
     if (log == NULL)
     {
         fputs("Error at opening File!", stderr);
         exit(1);
     }
-    fwrite(&l,sizeof(struct user_details),1,log);
+    fwrite(&l, sizeof(struct user_details), 1, log);
     fclose(log);
-    printf("\nConfirming details...\n...\nWelcome, %s!\n\n",l.first_name);
+    printf("\nConfirming details...\n...\nWelcome, %s!\n\n", l.first_name);
     printf("\nRegistration Successful!\n");
     printf("Press any key to continue...");
     getch();
@@ -1383,8 +1421,8 @@ void user_main()
     printf("\n2. Existing User -- Sign In");
     printf("\n3. Return to main menu");
     printf("\n\n Enter your choice: ");
-    scanf("%d",&ch);
-    switch(ch)
+    scanf("%d", &ch);
+    switch (ch)
     {
     case 1:
         user_reg();
@@ -1394,7 +1432,7 @@ void user_main()
         login(0);
         break;
     case 3:
-    login_main(1);
+        login_main(1);
         return;
     default:
         printf("\nWrong Choice!! ");
@@ -1434,8 +1472,8 @@ int main()
 //Routes Main menu
 void routes_menu()
 {
-    int n,c = 1;
-    while (c !=4 )
+    int n, c = 1;
+    while (c != 4)
     {
         printf("--------------------------\n");
         printf("-----Routes Menu----------\n");
@@ -1448,28 +1486,28 @@ void routes_menu()
         printf("Enter your choice: ");
         scanf("%d", &c);
 
-        switch(c)
+        switch (c)
         {
-            case 1:
-                head = NULL;
-                last = NULL;
-                printf("\nEnter the number of stops you would like to create: ");
-                scanf("%d",&n);
-                create_route(n);
-                break;
-            case 2:
-                display_route();
-                break;
-            case 3:
-                modify_route();
-                break;
-            case 4:
-                admin_menu();
-                break;    
-            default:
-                printf("Enter a valid choice.\nGiven choice is invalid.\n ");
+        case 1:
+            head = NULL;
+            last = NULL;
+            printf("\nEnter the number of stops you would like to create: ");
+            scanf("%d", &n);
+            create_route(n);
+            break;
+        case 2:
+            display_route();
+            break;
+        case 3:
+            modify_route();
+            break;
+        case 4:
+            admin_menu();
+            break;
+        default:
+            printf("Enter a valid choice.\nGiven choice is invalid.\n ");
         }
-        printf("\n\n\n\n");       
+        printf("\n\n\n\n");
     }
 }
 
@@ -1479,32 +1517,32 @@ void create_route(int n)
     int i;
     char data[15];
     struct routes *newNode;
-    if(n >= 1)
+    if (n >= 1)
     {
-        head = (struct routes*)malloc(sizeof(struct routes));
+        head = (struct routes *)malloc(sizeof(struct routes));
         printf("Enter the origin: ");
         fflush(stdin);
-        fgets(data,15,stdin);
+        fgets(data, 15, stdin);
 
-        strcpy(head->origin,data);
+        strcpy(head->origin, data);
         head->previous = NULL;
         head->next = NULL;
 
         last = head;
         //Adding the rest of the cities
-        for(i=2; i<=n; i++)
+        for (i = 2; i <= n; i++)
         {
-            newNode = (struct routes*)malloc(sizeof(struct routes));
+            newNode = (struct routes *)malloc(sizeof(struct routes));
             printf("Enter the next stop: ");
             fflush(stdin);
-            fgets(data,15,stdin);
-            
-            strcpy(newNode->origin,data);
+            fgets(data, 15, stdin);
+
+            strcpy(newNode->origin, data);
             newNode->previous = last;
             newNode->next = NULL;
 
-            last->next = newNode;           //Link previous city to new one
-            last = newNode;                 //New node is the last node
+            last->next = newNode; //Link previous city to new one
+            last = newNode;       //New node is the last node
         }
         printf("\n\nRoute created successfully");
     }
@@ -1515,7 +1553,7 @@ void display_route()
 {
     struct routes *temp;
 
-    if(head == NULL)
+    if (head == NULL)
     {
         printf("No route found");
     }
@@ -1523,7 +1561,7 @@ void display_route()
     {
         temp = head;
         printf("\n\nThe route active is:\n\n");
-        while(temp != NULL)
+        while (temp != NULL)
         {
             printf("%s\n", temp->origin);
             temp = temp->next;
@@ -1531,12 +1569,12 @@ void display_route()
     }
 }
 
-//For Modification 
+//For Modification
 void modify_route()
 {
-    int n,c = 1;
+    int n, c = 1;
     char city[15];
-    while (c !=0 )
+    while (c != 0)
     {
         printf("---------------------------------------\n");
         printf("-----Routes Modification Menu----------\n");
@@ -1547,36 +1585,36 @@ void modify_route()
         printf("---------------------------------------\n");
         printf("Enter your choice: ");
         scanf("%d", &c);
-        switch(c)
+        switch (c)
         {
-            case 1:
-                printf("\nEnter the city which you would like to add: ");
-                fflush(stdin);
-                fgets(city,15,stdin);
-                printf("\nEnter the position where you would like to enter a new city: ");
-                scanf("%d",&n);
-                insert_route(n,city);
-                break;
-            case 2:
-                printf("\nEnter the position from which you would like to delete: ");
-                scanf("%d",&n);
-                delete_route(n);
-                break;
-            case 3:
-                routes_menu();
-                break;
-            default:
-                printf("Invalid choice. Try again");
+        case 1:
+            printf("\nEnter the city which you would like to add: ");
+            fflush(stdin);
+            fgets(city, 15, stdin);
+            printf("\nEnter the position where you would like to enter a new city: ");
+            scanf("%d", &n);
+            insert_route(n, city);
+            break;
+        case 2:
+            printf("\nEnter the position from which you would like to delete: ");
+            scanf("%d", &n);
+            delete_route(n);
+            break;
+        case 3:
+            routes_menu();
+            break;
+        default:
+            printf("Invalid choice. Try again");
         }
     }
 }
 
 //For insertion of a city
-void insert_route(int n,char d[])
+void insert_route(int n, char d[])
 {
     int i;
     struct routes *newNode, *temp;
-    if(head == NULL)
+    if (head == NULL)
     {
         printf("The route does not exist");
     }
@@ -1584,17 +1622,17 @@ void insert_route(int n,char d[])
     {
         temp = head;
         i = 1;
-        while(i<n-1 && temp!= NULL)
+        while (i < n - 1 && temp != NULL)
         {
             temp = temp->next;
             i++;
         }
 
         //If Origin needs to be modified
-        if( n == 1)
+        if (n == 1)
         {
-            newNode = (struct routes*)malloc(sizeof(struct routes));
-            strcpy(newNode->origin,d);
+            newNode = (struct routes *)malloc(sizeof(struct routes));
+            strcpy(newNode->origin, d);
             newNode->next = head;
             newNode->previous = NULL;
 
@@ -1603,16 +1641,16 @@ void insert_route(int n,char d[])
 
             printf("\nRoute modified Successfully!!!");
         }
-        else if(temp == last) //To modify destination
+        else if (temp == last) //To modify destination
         {
-            if(last == NULL)
+            if (last == NULL)
             {
                 printf("Nothing to enter here! As the list is empty.");
             }
             else
             {
-                newNode = (struct routes*)malloc(sizeof(struct routes));
-                strcpy(newNode->origin,d);
+                newNode = (struct routes *)malloc(sizeof(struct routes));
+                strcpy(newNode->origin, d);
                 newNode->next = NULL;
                 newNode->previous = last;
 
@@ -1621,13 +1659,13 @@ void insert_route(int n,char d[])
                 printf("\nRoute modified successfully!!!");
             }
         }
-        else if(temp != NULL)
+        else if (temp != NULL)
         {
-            newNode = (struct routes*)malloc(sizeof(struct routes));
-            strcpy(newNode->origin,d);
-            newNode->next = temp->next;     //New->next to n+1
-            newNode->previous = temp;       //new->prev to n-1
-            if(temp->next!=NULL)
+            newNode = (struct routes *)malloc(sizeof(struct routes));
+            strcpy(newNode->origin, d);
+            newNode->next = temp->next; //New->next to n+1
+            newNode->previous = temp;   //new->prev to n-1
+            if (temp->next != NULL)
             {
                 temp->next->previous = newNode;
             }
@@ -1648,45 +1686,45 @@ void delete_route(int n)
     int i;
 
     current = head;
-    for(i=1; i<n && current!=NULL; i++)
+    for (i = 1; i < n && current != NULL; i++)
     {
         current = current->next;
     }
-    
+
     //If the origin needs to be deleted
-    if(n == 1)
+    if (n == 1)
     {
-        if(head == NULL)
+        if (head == NULL)
         {
             printf("\nNothing to delete here!!!!");
         }
         else
         {
             head = head->next; //Since the origin needs to be needed
-            if(head != NULL)
-                head ->previous = NULL;
-            
+            if (head != NULL)
+                head->previous = NULL;
+
             free(current); //Delete the data from memory
             printf("Successfully modified the route");
         }
     }
-    else if(current == last)    //Delete the last city
+    else if (current == last) //Delete the last city
     {
-        if(last == NULL)
+        if (last == NULL)
         {
             printf("\nNothing to delete here!!!!");
         }
         else
         {
-            last = last->previous;  //To make the second last city now the destination
-            if(last != NULL)
+            last = last->previous; //To make the second last city now the destination
+            if (last != NULL)
                 last->next = NULL;
 
-            free(current);      //To free memory
-            printf("Successfully modified the route");            
+            free(current); //To free memory
+            printf("Successfully modified the route");
         }
     }
-    else if(current != NULL)
+    else if (current != NULL)
     {
         current->previous->next = current->next;
         current->next->previous = current->previous;
