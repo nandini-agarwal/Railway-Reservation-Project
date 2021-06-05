@@ -102,4 +102,9 @@ Railway Reservation Project for DSA Assignment
 
 24. seatAllocation: This function allocates the seat to the user.
 
+**Steps to run the program:**
+      
+  We are using **gcc compiler.**
 
+1. To compile the program: gcc main_prg.c
+2. To run the program :     main_prg.exe
