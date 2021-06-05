@@ -59,7 +59,7 @@ struct routes
     struct routes *previous;
 } * head, *last;
 
-double totalcost = 0;
+int totalcost = 0;
 struct train_details
 {
     char train_name[50];
@@ -93,7 +93,6 @@ void insert_route(int n, char d[15]);
 void delete_route(int n);
 void user_validt(char uname[], char pwd[]);
 void search_route(char city1[], char city2[]);
-int seatAllocation(int capacity, int tno, int choice);
 int route_found = 0;
 
 void search_route(char city1[], char city2[]) // fn for searching routes
@@ -130,68 +129,12 @@ void search_route(char city1[], char city2[]) // fn for searching routes
     }
 }
 
-int seatAllocation(int capacity, int tno, int choice)
-{
-    FILE *fptr;
-    struct train_details t;
-    fptr = fopen("TrainDetails.txt", "a+");
-    if (fptr == NULL)
-    {
-        printf("ERROR! File could not open");
-        exit(1);
-    }
-    switch (choice)
-    {
-    case 1:
-    {
-        while (fread(&t, sizeof(struct train_details), 1, fptr)) //loop to iterate over file
-        {
-            if (!strcmpi(t.train_number, tno))
-            {
-
-                if (t.seats > capacity)
-                {
-                    t.seats = t.seats - capacity;
-                }
-                else
-                {
-                    printf("\n Only %d Seats Left ", t.seats);
-                }
-
-                fclose(fptr);
-                return 1;
-            }
-        }
-    }
-    break;
-
-    case 2:
-    {
-        while (fread(&t, sizeof(struct train_details), 1, fptr)) //loop to iterate over file
-        {
-            if (!strcmpi(t.train_number, tno))
-            {
-                t.seats = t.seats + capacity;
-
-                fclose(fptr);
-                return 1;
-            }
-        }
-    }
-    break;
-
-    default:
-        fclose(fptr);
-        break;
-    }
-}
-
 int makePayment(int totalFare) // fn for making payment
 {
     int ch = 0;
-    if (totalFare > 0.0)
+    if (totalFare > 0)
     {
-        printf("\n\nYour Fare For Tickets is   %lf ", totalFare);
+        printf("\n\nYour Fare For Tickets is   %d ", totalFare);
         printf("\n\nPress 1 To Pay");
         printf("\nPress 0 To Cancel ");
         scanf("%d", &ch);
@@ -206,23 +149,28 @@ int makePayment(int totalFare) // fn for making payment
 
 int payment(int age, int amount, int userinput) // fn for calculating fare
 {
+    int PayAmount = 0;
     switch (userinput)
     {
     case 1:
     { //case for adding calc , when passenger added
         totalcost = amount;
-        int fare = 1500;
+        int fare = 1000;
         if (age >= 0 && age <= 5)
         {
             totalcost = totalcost; // for less than  5 year age , 0 fare
+            printf("Fare is Rs 0.");
         }
         else if (age >= 5 && age <= 12)
         {
             totalcost = totalcost + (fare / 2); // half fare for 5-12 age passengers
+            printf("Fare is Rs %d", (fare/2));
         }
         else if (age >= 60)
         {
-            totalcost = totalcost + (0.4 * fare); // for passengers above 60 , 40 % discount
+            PayAmount = (fare - (0.4 * fare))+1;
+            totalcost = totalcost + PayAmount; // for passengers above 60 , 40 % discount
+            printf("Fare is Rs %d", PayAmount);
         }
         else
         {
@@ -245,7 +193,8 @@ int payment(int age, int amount, int userinput) // fn for calculating fare
         }
         else if (age >= 60)
         {
-            totalcost = totalcost - (0.4 * fare);
+            PayAmount = fare - (0.4 * fare);
+            totalcost = totalcost - PayAmount;
         }
         else
         {
@@ -320,17 +269,22 @@ int bookingTrain() // fn for making user booking
         }
     }
 
-    search_route(book[input].From, book[input].Destination); // check if route exists or not
-    if (route_found == 0)
-    {
-        printf("\nBooking Can't Be Done As No Such Route Exist");
-        getch();
-        user_menu();
-    }
+    // search_route(book[input].From, book[input].Destination); // check if route exists or not
+    // if (route_found == 0)
+    // {
+    //     printf("\nBooking Can't Be Done As No Such Route Exist");
+    //     getch();
+    //     user_menu();
+    // }
     view_Details();
+    display_route();
     fflush(stdin);
     printf("\nTrain No. - ");
     scanf("%d", &book[input].trainNo);
+    printf("\n\nFare Per Person is Rs.1000");
+    printf("\n\n NOTE :  For kids till 5 Years - No Fare");
+    printf("\n\t For Passenger between 5 to 12 Years - Half Fare (i.e. Rs 500)");
+    printf("\n\t For Passenger Above 60 Years - 40 percent disocunt (i.e. Rs 600)\n\n");
 
     isValid = 1;
     while (1)
@@ -479,7 +433,6 @@ int bookingTrain() // fn for making user booking
     if (makePayment(book[input].amount))
     {
         input = input + 1;
-        seatAllocation(book[input].NoOfPassengers, book[input].trainNo, 1);
         printf("\nYour PNR No. Is :  %d", book[input - 1].PNR); // Payment made or declined
         printf("\n!! Reservation Done successfully !!\n ");
         getch();
@@ -624,7 +577,6 @@ void cancelBooking()
         {
             check = 1;
             book[i].PNR = 0;
-            seatAllocation(book[i].NoOfPassengers, book[i].trainNo, 2);
             printf("\n !! Your Booking Is Cancelled !!");
             printf("\n\n Note: Your amount will be refunded within 2 days of Cancel the Booking");
             getch();
@@ -751,7 +703,6 @@ void modifyBooking() // fn for modify booking
                                         }
                                     }
                                     book[ch].pt[j].pid = j + 1;
-                                    seatAllocation(book[ch].NoOfPassengers, book[ch].trainNo, 1);
                                     if (book[ch].pt[j].age > 5)
                                     {
                                         book[ch].amount = payment(book[ch].pt[j].age, book[ch].amount, 1);
@@ -791,7 +742,6 @@ void modifyBooking() // fn for modify booking
                             book[ch].pt[pos].pid = 0;
                             if (value >= 1)
                             {
-                                seatAllocation(book[ch].NoOfPassengers, book[ch].trainNo, 2);
                                 book[ch].amount = payment(book[ch].pt[pos].age, book[ch].amount, 2);
                                 printf("\nPassenger Removed Successfully !!");
                                 printf("\nUpdated Fare is %d", book[ch].amount);
@@ -1138,7 +1088,7 @@ void view_Details()
     printf("Train Number   Train Name      Train Origin    Train Destination   Train Class\n");
     while (fscanf(fptr, "%s\t%s\t%s\t%s\t\t%s\n", obj.train_number, obj.train_name, obj.origin, obj.destination, obj.train_class) != EOF)
     {
-        printf("%s\t\t%s\t\t%s\t\t%s\t\t%s\n", obj.train_number, obj.train_name, obj.origin, obj.destination, obj.train_class);
+        printf("%s\t\t%s\t\t%s\t\t%s\t\t\t%s\n", obj.train_number, obj.train_name, obj.origin, obj.destination, obj.train_class);
     }
     getch();
     fclose(fptr);
@@ -1442,6 +1392,7 @@ void user_main()
 //Main function
 int main()
 {
+    bookingTrain();
     int choice;
     while (1)
     {
@@ -1475,6 +1426,7 @@ void routes_menu()
     int n, c = 1;
     while (c != 4)
     {
+        system("@cls||clear");
         printf("--------------------------\n");
         printf("-----Routes Menu----------\n");
         printf("--------------------------\n");
@@ -1545,6 +1497,7 @@ void create_route(int n)
             last = newNode;       //New node is the last node
         }
         printf("\n\nRoute created successfully");
+        getch();
     }
 }
 
@@ -1567,6 +1520,7 @@ void display_route()
             temp = temp->next;
         }
     }
+    getch();
 }
 
 //For Modification
