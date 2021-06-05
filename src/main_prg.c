@@ -269,13 +269,13 @@ int bookingTrain() // fn for making user booking
         }
     }
 
-    // search_route(book[input].From, book[input].Destination); // check if route exists or not
-    // if (route_found == 0)
-    // {
-    //     printf("\nBooking Can't Be Done As No Such Route Exist");
-    //     getch();
-    //     user_menu();
-    // }
+    search_route(book[input].From, book[input].Destination); // check if route exists or not
+    if (route_found == 0)
+    {
+        printf("\nBooking Can't Be Done As No Such Route Exist");
+        getch();
+        user_menu();
+    }
     view_Details();
     display_route();
     fflush(stdin);
