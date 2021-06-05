@@ -122,7 +122,9 @@ Railway Reservation Project for DSA Assignment
 **Some future scope:**
 
 Functionality for Admin: 
+
 Display Reservation Chart
 
 Functions:
+
 disp_resv_chart: This function would take train number and date of journey as input to display a reservation chart of that train.
