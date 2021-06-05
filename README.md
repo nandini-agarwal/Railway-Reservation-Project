@@ -51,26 +51,40 @@ Railway Reservation Project for DSA Assignment
 
 **The program has following functions:**
 
-void view_Details();
-void add_train();
-int makePayment(int totalFare);
-int payment(int age, int amount,int userinput);
-int bookingTrain();
-void show_booking();
-void cancelBooking();
-int admin_passwd_valid(char uname[10], char pwd[12]);
-void user_menu();
-void admin_menu();
-void login_main(int n);
-void user_main();
-void user_reg();
-// void login();
-void routes_menu();
-// void create_route(int n);
-void display_route();
-void modify_route();
-// void insert_route(int n,char d[15]);
-// void delete_route(int n);
-void user_validt(char uname[],char pwd[]);
-void search_route(char city1[],char city2[]);
-int seatAllocation(int capacity,int tno,int choice);
+1. view_Details: This function views all the details of train
+
+2. add_train: This function helps admin to add the train
+
+3. payment: This function calculates the total amount to be paid by the user 
+
+4. makePayment: This function allows the user to either pay or deny the payment
+
+5. bookingTrain: This function helps the user to book a train.
+
+6. show_booking: This function shows all the booking done by the user 
+
+7. cancelBooking: This function allows the user to cancel the booking made by him
+
+8. admin_passwd_valid: This function validates the admin login
+
+9. user_menu: This function shows the user all the functionalities that he can perform
+
+10. admin_menu: This function shows the admin all the functionalities that he can perform.
+
+11. login_main: This function lets the user or admin enter their login creadentials and login.
+
+12. user_main: This function lets the user register as new user, or sign in if they are existing user.
+
+13. user_reg: This function lets the user register as a new user.
+
+14. routes_menu: This function lets the admin choose to create, display and modify train routes.
+
+15. display_route: This function lets the admin create a train route.
+
+16. modify_route: This function lets the admin modify an existing train route.
+
+17. user_validt: This function validates the user login.
+
+18. search_route: This function lets the user search the train route.
+
+19. seatAllocation: This function allocates the seat to the user.
