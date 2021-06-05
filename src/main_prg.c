@@ -93,7 +93,6 @@ void insert_route(int n,char d[15]);
 void delete_route(int n);
 void user_validt(char uname[],char pwd[]);
 void search_route(char city1[],char city2[]);
-int seatAllocation(int capacity,int tno,int choice);
 int route_found = 0;
 
 void search_route(char city1[],char city2[])               // fn for searching routes
@@ -126,58 +125,6 @@ void search_route(char city1[],char city2[])               // fn for searching r
             route_found = 0;
         }
     }
-}
-
-int seatAllocation(int capacity,int tno,int choice){
-     FILE *fptr;
-     struct train_details t;
-     fptr = fopen("TrainDetails.txt", "a+");
-     if (fptr == NULL)
-     {
-         printf("ERROR! File could not open");
-         exit(1);
-    }
-switch (choice)
-{
-case 1:
-    {
- while (fread(&t, sizeof(struct train_details), 1, fptr)) //loop to iterate over file
-    {
-        if (!strcmpi(t.train_number, tno))
-        {  
-
-            if(t.seats>capacity){
-                t.seats = t.seats - capacity;
-            }
-            else{
-                printf("\n Only %d Seats Left ",t.seats);
-            }
-
-            fclose(fptr);
-            return 1;
-        }
-    }
-
-    }
-    break;
-
-    case 2:{
-while (fread(&t, sizeof(struct train_details), 1, fptr)) //loop to iterate over file
-    {
-        if (!strcmpi(t.train_number, tno))
-        {  
-                t.seats = t.seats + capacity;
-
-            fclose(fptr);
-            return 1;
-        }
-    }
-    }
-    break;
-
-    default: fclose(fptr);
-        break;
-}
 }
 
 int makePayment(int totalFare)                // fn for making payment
@@ -472,7 +419,6 @@ int bookingTrain()                           // fn for making user booking
     if (makePayment(book[input].amount))
     {
         input=input +1;
-        seatAllocation(book[input].NoOfPassengers, book[input].trainNo, 1);
         printf("\nYour PNR No. Is :  %d", book[input - 1].PNR);            // Payment made or declined
         printf("\n!! Reservation Done successfully !!\n ");
         getch();
@@ -612,11 +558,10 @@ void cancelBooking(){                     // fn for cancel booking
         {
             check = 1;
             book[i].PNR = 0;
-             seatAllocation(book[i].NoOfPassengers, book[i].trainNo, 2);
             printf("\n !! Your Booking Is Cancelled !!");
             printf("\n\n Note: Your amount will be refunded within 2 days of Cancel the Booking");
             getch();
-    }
+        }
     }
     if(check==0){
         printf("\nInvalid PNR Entered.\nPlease Try Again.");
@@ -735,7 +680,6 @@ void modifyBooking()             // fn for modify booking
                                  }
                              }
                              book[ch].pt[j].pid = j + 1;
-                             seatAllocation(book[ch].NoOfPassengers, book[ch].trainNo, 1);
                              if(book[ch].pt[j].age >5 ){
                              book[ch].amount = payment(book[ch].pt[j].age, book[ch].amount,1);
                              printf("\n\nPassenger's Id is %d", book[ch].pt[j].pid);
@@ -760,25 +704,24 @@ void modifyBooking()             // fn for modify booking
                      scanf("%d", &id);
                      for (int i = 0; i < book[ch].NoOfPassengers;i++){  
                          if(book[ch].pt[i].pid==id) {
-                             pos = i;                        
+                            pos = i;                        
                          }
                          if(book[ch].pt[i].pid !=id && book[ch].pt[i].pid !=0)
-                             {value++;}
-                          }
+                            {value++;}
+                         }
                           book[ch].pt[pos].pid = 0;
                          if(value >=1) 
                          {
-                             seatAllocation(book[ch].NoOfPassengers, book[ch].trainNo, 2);
-                             book[ch].amount=payment(book[ch].pt[pos].age, book[ch].amount, 2);
-                             printf("\nPassenger Removed Successfully !!");
-                             printf("\nUpdated Fare is %d", book[ch].amount);
-                             printf("\n\nNOTE: Your amount will be refunded within 2 days\n");
+                            book[ch].amount=payment(book[ch].pt[pos].age, book[ch].amount, 2);
+                            printf("\nPassenger Removed Successfully !!");
+                            printf("\nUpdated Fare is %d", book[ch].amount);
+                            printf("\n\nNOTE: Your amount will be refunded within 2 days\n");
                          }
                          else{
-                             printf("\nWe can't remove this passenger , as it is the only passenger left. \nPlease cancel the Booking \n");
+                            printf("\nWe can't remove this passenger , as it is the only passenger left. \nPlease cancel the Booking \n");
                          }
                          getch();
-                          system("@cls||clear");
+                            system("@cls||clear");
                          modifyBooking();
                 }
                  break;
@@ -940,7 +883,7 @@ int passwd_valid(char uname[10],char pwd[12])
             }
         }
     }
-    printf("Invalid credentials. Please check again.");
+    printf("Invalid credentials. Please register first.");
     return 0;    
 }
 
@@ -1036,6 +979,13 @@ void add_train()
     FILE *fptr;
     printf("\nEnter num: ");
     scanf(" %s", &obj.train_number);
+    while(strlen(obj.train_number)!=4)
+    {
+        printf("\nThe Train number is not correct!");
+        printf("\nTrain number should be of 4 digit");
+        printf("\nEnter num: ");
+        scanf(" %s", &obj.train_number);
+    }
     printf("\nEnter name: ");
     scanf(" %s", &obj.train_name);
     printf("\nEnter origin: ");
@@ -1065,23 +1015,23 @@ void add_train()
         fputs(obj.train_class, fptr);
         fclose(fptr);
     }
-label:
+    label:
     printf("Do you want to view details?\n");
     printf("Enter 'y' to view details or 'n' to go back to main menu ");
     scanf(" %c", &choice);
     switch (choice)
-    {
-    case 'Y':
-    case 'y':
-        view_Details();
-        break;
-    case 'N':
-    case 'n':
-        printf("No");
-        break;
-    default:
-        printf("Wrong Choice!\n");
-    }
+        {
+            case 'Y':
+            case 'y':
+                view_Details();
+                break;
+            case 'N':
+            case 'n':
+                printf("No");
+                break;
+            default:
+                printf("Wrong Choice!\n");
+        }
 }
 
 //View Train Details Method
@@ -1113,75 +1063,37 @@ void admin_menu()
 {
     int ch;
     char c;
-    do
+    system("@cls||clear");
+    printf("\n-------Admin Menu--------\n");
+    printf("\n1. Add a train");
+    printf("\n2. Display train details");
+    printf("\n3. Display list of all users");
+    printf("\n4. Log Out");
+    printf("\nEnter your choice: ");
+    scanf("%d",&ch);
+    switch(ch)
     {
+        case 1:
         system("@cls||clear");
-        printf("\n-------Admin Menu--------\n");
-        printf("\n1. Add a train");
-        printf("\n2. Display train details");
-        printf("\n3. Log Out");
-        printf("Enter your choice: ");
-        scanf("%d",&ch);
-        switch(ch)
-        {
-            case 1:
+            add_train();
+            printf("\n\n\n\n");
+            routes_menu();
+            break;
+        case 2:
             system("@cls||clear");
-                add_train();
-                printf("\n\n\n\n");
-                routes_menu();
-                break;
-            case 2:
+            view_Details();
+            break;
+        case 3:
+            disp_users();
+            break;
+        case 4:
             system("@cls||clear");
-                view_Details();
-                break;
-            case 3:
-
-                printf("Succesfully logged out");
-                break;
-        }
-        fflush(stdin);
-        printf("Do you wish to continue?(Please enter Y or y to continue) ");
-        scanf("%c",&c);
-    }while (c == 'Y' || c == 'y');
-}
-//User validation
-void user_validt(char uname[],char pwd[])
-{
-    FILE *log;
-    log = fopen("login.txt","r");
-    if (log == NULL)
-    {
-        fputs("Error at opening File!", stderr);
-        exit(1);
-    }
-    struct user_details l;
-    while(fread(&l,sizeof(struct user_details),1,log))
-    {
-        if(strcmp(uname,l.user_name) ==0 && strcmp(pwd,l.password)==0)
-        {   
-            printf("\nSuccessful Login\n");
+            printf("\n\nSuccesfully logged out");
+            printf("\nPress any key to continue....");
             getch();
-            user_menu();
-        }
-        else 
-        {
-            printf("\nIncorrect Login Details\nPlease enter the correct credentials\n");
-        }
+            main();
+            break;
     }
-    fclose(log);
-}
-
-//User Login
-void login()
-{
-    char username[30],password[20];
-    printf("\nPlease Enter your login credentials below\n\n");
-    printf("Username:");
-    scanf("%s",username);
-    printf("\nPassword:");
-    scanf("%s",password);
-    user_validt(username,password);
-    getch();
 }
 
 //Main Login panel
@@ -1190,6 +1102,7 @@ void login_main(int n)          // 0 -- Normal User, 1 -- Admin
     int res;
     char us_name[10];
     char pwd[12];
+    system("@cls||clear");
     printf("\nEnter the user name: ");
     scanf("%s",us_name);
     printf("\nEnter the password: ");
@@ -1197,10 +1110,6 @@ void login_main(int n)          // 0 -- Normal User, 1 -- Admin
     if (n == 1)
     {
         res = admin_passwd_valid(us_name,pwd);
-    }
-    else if(n == 0)
-    {
-        // res = user_passwd_valid(us_name,pwd);
     }
     if(res == 1)
         admin_menu();
@@ -1371,6 +1280,46 @@ void user_reg()
     login();
 }
 
+//User Login
+void login()
+{
+    char username[30],password[20];
+    printf("\n**********Please Enter your login credentials below**********\n\n");
+    printf("Username:");
+    scanf("%s",username);
+    printf("\nPassword:");
+    scanf("%s",password);
+    user_validt(username,password);
+    getch();
+}
+
+//User validation
+void user_validt(char uname[],char pwd[])
+{
+    FILE *log;
+    log = fopen("login.txt","r");
+    if (log == NULL)
+    {
+        fputs("Error at opening File!", stderr);
+        exit(1);
+    }
+    struct user_details l;
+    while(fread(&l,sizeof(struct user_details),1,log))
+    {
+        if(strcmp(uname,l.user_name) ==0 && strcmp(pwd,l.password)==0)
+        {   
+            printf("\nSuccessful Login\n");
+            getch();
+            user_menu();
+        }
+        else 
+        {
+            printf("\nIncorrect Login Details\nPlease enter the correct credentials\n");
+        }
+    }
+    fclose(log);
+}
+
 //User Main panel
 void user_main()
 {
@@ -1394,7 +1343,7 @@ void user_main()
         login(0);
         break;
     case 3:
-    login_main(1);
+        main();
         return;
     default:
         printf("\nWrong Choice!! ");
@@ -1698,4 +1647,29 @@ void delete_route(int n)
     {
         printf("\nInvalid position\n");
     }
+}
+
+void disp_users()
+{
+    FILE *fptr;
+    fptr = fopen("login.txt", "r");
+    char chr;
+    if (fptr == NULL)
+    {
+        printf("ERROR! File could not open");
+        exit(1);
+    }
+    printf("===================================User Details===============================\n");
+    printf("\n");
+    printf("First Name Last Name Age Contact Number \n");
+    struct user_details l;
+    while(fread(&l,sizeof(struct user_details),1,fptr))
+    {
+        printf("\nFirstname= %s", l.first_name);
+        printf("\tLastname= %s", l.last_name);
+        printf("\tAge= %d", l.age);
+        printf("\tContactNo= %s", l.contact_number);
+    }
+    getch();
+    fclose(fptr);
 }
