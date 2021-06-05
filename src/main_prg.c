@@ -1392,7 +1392,6 @@ void user_main()
 //Main function
 int main()
 {
-    bookingTrain();
     int choice;
     while (1)
     {
