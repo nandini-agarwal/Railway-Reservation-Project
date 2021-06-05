@@ -175,6 +175,7 @@ int payment(int age, int amount, int userinput) // fn for calculating fare
         else
         {
             totalcost = fare + totalcost; // others , complete fare
+            printf("Fare is Rs %d",fare);
         }
         return totalcost;
     }
@@ -182,23 +183,27 @@ int payment(int age, int amount, int userinput) // fn for calculating fare
     case 2:
     { // fn for deducting fare from amount when passenger is removed
         totalcost = amount;
-        int fare = 1500;
+        int fare = 1000;
         if (age >= 0 && age <= 5)
         {
             totalcost = totalcost;
+            printf(" No Change In Fare %d",totalcost);
         }
         else if (age >= 5 && age <= 12)
         {
             totalcost = totalcost - (fare / 2);
+            printf("\nAmount Deducted %d",(fare/2));
         }
         else if (age >= 60)
         {
-            PayAmount = fare - (0.4 * fare);
+            PayAmount = (fare - (0.4 * fare))+1;
             totalcost = totalcost - PayAmount;
+            printf("\nAmount Deducted %d",PayAmount);
         }
         else
         {
             totalcost = totalcost - fare;
+            printf("\nAmount Deducted %d",fare);
         }
         return totalcost;
     }
@@ -427,7 +432,7 @@ int bookingTrain() // fn for making user booking
 
         book[input].amount = payment(book[input].pt[j].age, book[input].amount, 1);
         book[input].pt[j].pid = j + 1;
-        printf("\nPassenger Id is %d", book[input].pt[j].pid);
+        printf("\n\nPassenger Id is %d", book[input].pt[j].pid);
     }
     int ch = 0;
     if (makePayment(book[input].amount))
@@ -497,6 +502,7 @@ void show_booking() // fn for show booking
             if (check == 0)
             {
                 printf("\n!! No Booking Found with this PNR No. !!");
+                getch();
                 show_booking();
             }
         }
@@ -871,8 +877,7 @@ void modifyBooking() // fn for modify booking
             }
             if (booking_found == 0)
             {
-                printf("\nInvalid PNR No. Entered.");
-                getch();
+                printf("\n Invalid PNR No. Entered.");
             }
         }
         break;
@@ -887,6 +892,7 @@ void modifyBooking() // fn for modify booking
         if (check == 0)
         {
             printf("\nNo Booking Found With This PNR No.");
+            getch();
             modifyBooking();
         }
     }
